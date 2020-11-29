@@ -1,0 +1,15 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+
+[*.java]
+indent_style = space
+indent_size = 4
+
+# IntelliJ specific
+ij_java_class_count_to_use_import_on_demand = 999
+ij_java_names_count_to_use_import_on_demand = 999
+ij_java_packages_to_use_import_on_demand = ""

@@ -135,6 +135,7 @@ public class UserControllerTest extends TestBase {
     public void shouldUpdateUser() throws Exception {
 
         User user = new User();
+        user.setId(10L);
         user.setUsername("admin");
         user.setFirstName("Firstname");
         user.setLastName("Lastname");

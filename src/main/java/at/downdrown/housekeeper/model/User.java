@@ -7,8 +7,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 
 import static at.downdrown.housekeeper.model.FieldConstants.SHORT_COLUMN_LENGTH;
@@ -22,9 +26,14 @@ import static at.downdrown.housekeeper.model.FieldConstants.SHORT_COLUMN_LENGTH;
 @Setter
 @Entity
 @Table(name = "USERS")
-public class User {
+public class User implements Serializable {
 
     @Id
+    @Column(name = "ID", nullable = false, unique = true, updatable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "USERS_SQ")
+    @SequenceGenerator(name = "USERS_SQ", sequenceName = "USERS_SQ", initialValue = 1000, allocationSize = 1)
+    private Long id;
+
     @Column(name = "USERNAME", length = SHORT_COLUMN_LENGTH, nullable = false, updatable = false, unique = true)
     private String username;
 

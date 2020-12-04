@@ -36,18 +36,21 @@ public class UserController {
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> create(@RequestBody User user) {
-        if (userRepository.existsById(user.getUsername())) {
+        if (userRepository.existsByUsername(user.getUsername())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         } else {
             return ResponseEntity.status(HttpStatus.CREATED).body(userRepository.save(user));
         }
     }
 
-    @GetMapping(value = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> findById(@PathVariable("id") String id) {
-        return userRepository.findById(id)
-            .map(ResponseEntity::ok)
-            .orElseGet(ResponseEntity.notFound()::build);
+    @GetMapping(value = "{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<User> findById(@PathVariable("username") String username) {
+        User user = userRepository.findByUsername(username);
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -57,17 +60,17 @@ public class UserController {
 
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> update(@RequestBody User user) {
-        if (userRepository.existsById(user.getUsername())) {
+        if (userRepository.existsByUsername(user.getUsername())) {
             return ResponseEntity.ok(userRepository.save(user));
         } else {
             return ResponseEntity.notFound().build();
         }
     }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") String id) {
-        if (userRepository.existsById(id)) {
-            userRepository.deleteById(id);
+    @DeleteMapping("{username}")
+    public ResponseEntity<Void> delete(@PathVariable("username") String username) {
+        if (userRepository.existsByUsername(username)) {
+            userRepository.deleteByUsername(username);
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.notFound().build();

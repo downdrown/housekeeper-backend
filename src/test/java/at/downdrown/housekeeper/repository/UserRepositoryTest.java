@@ -47,9 +47,9 @@ public class UserRepositoryTest extends TestBase {
         repository.flush();
 
         // then
-        Optional<User> max = repository.findById("max");
-        assertThat(max).isPresent();
-        assertThat(max.get())
+        User max = repository.findByUsername("max");
+        assertThat(max)
+            .isNotNull()
             .extracting(
                 User::getUsername,
                 User::getFirstName,
@@ -67,14 +67,21 @@ public class UserRepositoryTest extends TestBase {
     @Test
     @Sql(CREATE_USERS_SQL)
     public void shouldReadUser() {
-        assertThat(repository.findById("admin")).isPresent();
+        assertThat(repository.findByUsername("admin")).isNotNull();
+    }
+
+    @Test
+    @Sql(CREATE_USERS_SQL)
+    public void shouldReadUsers() {
+        assertThat(repository.findAll()).hasSize(3);
     }
 
     @Test
     @Sql(CREATE_USERS_SQL)
     public void shouldUpdateUser() {
-        User user = repository.findById("admin").orElseThrow(AssertionFailedError::new);
+        User user = repository.findByUsername("admin");
         assertThat(user)
+            .isNotNull()
             .extracting(
                 User::getUsername,
                 User::getFirstName,
@@ -116,8 +123,8 @@ public class UserRepositoryTest extends TestBase {
     @Test
     @Sql(CREATE_USERS_SQL)
     public void shouldDeleteUser() {
-        assertThat(repository.findById("admin")).isPresent();
-        repository.deleteById("admin");
-        assertThat(repository.findById("admin")).isNotPresent();
+        assertThat(repository.findByUsername("admin")).isNotNull();
+        repository.deleteByUsername("admin");
+        assertThat(repository.findByUsername("admin")).isNull();
     }
 }

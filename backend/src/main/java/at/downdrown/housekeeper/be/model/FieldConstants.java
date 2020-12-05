@@ -1,4 +1,4 @@
-package at.downdrown.housekeeper.model;
+package at.downdrown.housekeeper.be.model;
 
 /**
  * Defines constants for declaring entities.

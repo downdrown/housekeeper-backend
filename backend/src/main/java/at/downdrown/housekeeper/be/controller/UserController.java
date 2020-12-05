@@ -1,7 +1,7 @@
-package at.downdrown.housekeeper.controller;
+package at.downdrown.housekeeper.be.controller;
 
-import at.downdrown.housekeeper.model.User;
-import at.downdrown.housekeeper.repository.UserRepository;
+import at.downdrown.housekeeper.be.model.User;
+import at.downdrown.housekeeper.be.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * REST Controller for the {@link at.downdrown.housekeeper.model.User} entity.
+ * REST Controller for the {@link at.downdrown.housekeeper.be.model.User} entity.
  *
  * @author Manfred Huber
  */

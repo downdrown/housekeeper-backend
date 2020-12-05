@@ -1,4 +1,4 @@
-package at.downdrown.housekeeper.config;
+package at.downdrown.housekeeper.be.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

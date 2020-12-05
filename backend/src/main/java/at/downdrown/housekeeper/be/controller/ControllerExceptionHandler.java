@@ -1,4 +1,4 @@
-package at.downdrown.housekeeper.controller;
+package at.downdrown.housekeeper.be.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;

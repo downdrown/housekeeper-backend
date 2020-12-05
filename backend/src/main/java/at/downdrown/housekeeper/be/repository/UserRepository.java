@@ -1,6 +1,6 @@
-package at.downdrown.housekeeper.repository;
+package at.downdrown.housekeeper.be.repository;
 
-import at.downdrown.housekeeper.model.User;
+import at.downdrown.housekeeper.be.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**

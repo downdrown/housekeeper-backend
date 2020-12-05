@@ -1,8 +1,8 @@
-package at.downdrown.housekeeper.repository;
+package at.downdrown.housekeeper.be.repository;
 
 import at.downdrown.housekeeper.TestBase;
 import at.downdrown.housekeeper.api.Role;
-import at.downdrown.housekeeper.model.User;
+import at.downdrown.housekeeper.be.model.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;

@@ -1,21 +1,24 @@
-package at.downdrown.housekeeper.config;
+package at.downdrown.housekeeper.be.config;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 /**
- * Web-Security related configuration bean for development.
- * Disables CORS and CSRF for easier development.
+ * Web-Security related configuration bean for unit-tests.
+ * This is required because some security related settings have to
+ * be disabled in order to be able to execute the controller tests.
+ *
+ * Disables CORS and CSRF.
  *
  * @author Manfred Huber
+ * @deprecated moved to web module
  */
-@Profile("dev")
 @Configuration
 @EnableWebSecurity
-public class DevWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+@Deprecated
+public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {

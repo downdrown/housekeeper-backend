@@ -1,4 +1,4 @@
-package at.downdrown.housekeeper.model;
+package at.downdrown.housekeeper.be.model;
 
 import at.downdrown.housekeeper.api.Role;
 import lombok.Getter;
@@ -16,7 +16,7 @@ import javax.persistence.Table;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 
-import static at.downdrown.housekeeper.model.FieldConstants.SHORT_COLUMN_LENGTH;
+import static at.downdrown.housekeeper.be.model.FieldConstants.SHORT_COLUMN_LENGTH;
 
 /**
  * Represents a single user in the application.

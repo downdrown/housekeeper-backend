@@ -1,8 +1,8 @@
-package at.downdrown.housekeeper.controller;
+package at.downdrown.housekeeper.be.controller;
 
 import at.downdrown.housekeeper.TestBase;
 import at.downdrown.housekeeper.api.Role;
-import at.downdrown.housekeeper.model.User;
+import at.downdrown.housekeeper.be.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +25,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * @see at.downdrown.housekeeper.model.User
- * @see at.downdrown.housekeeper.repository.UserRepository
+ * @see at.downdrown.housekeeper.be.model.User
+ * @see at.downdrown.housekeeper.be.repository.UserRepository
  * @see UserController
  * @author Manfred Huber
  */

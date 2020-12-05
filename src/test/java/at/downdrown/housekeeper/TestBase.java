@@ -12,4 +12,10 @@ public abstract class TestBase {
     /** Creates 3 users - one for each role. */
     protected static final String CREATE_USERS_SQL = "/sql/create-users.sql";
 
+    /**
+     * Creates 3 credentials - one for each user.
+     * Requires {@link at.downdrown.housekeeper.TestBase#CREATE_USERS_SQL} to be executed first.
+     */
+    protected static final String CREATE_CREDENTIALS_SQL = "/sql/create-credentials.sql";
+
 }

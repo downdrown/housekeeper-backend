@@ -1,1 +1,4 @@
 rootProject.name = 'housekeeper'
+include 'api'
+include 'backend'
+include 'web'

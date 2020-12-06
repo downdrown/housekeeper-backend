@@ -35,7 +35,7 @@ public class User implements Serializable {
     @SequenceGenerator(name = "USERS_SQ", sequenceName = "USERS_SQ", initialValue = 1000, allocationSize = 1)
     private Long id;
 
-    @Column(name = "USERNAME", length = SHORT_COLUMN_LENGTH, nullable = false, updatable = false, unique = true)
+    @Column(name = "USERNAME", length = SHORT_COLUMN_LENGTH, nullable = false, unique = true)
     private String username;
 
     @Column(name = "FIRSTNAME", nullable = false)

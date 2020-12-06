@@ -20,4 +20,6 @@ public class UserDTO {
     private Role role;
     private ZonedDateTime lastLogin;
 
+    private String registrationPassword;
+
 }

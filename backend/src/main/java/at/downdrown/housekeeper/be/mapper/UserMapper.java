@@ -3,6 +3,7 @@ package at.downdrown.housekeeper.be.mapper;
 import at.downdrown.housekeeper.api.dto.UserDTO;
 import at.downdrown.housekeeper.be.model.User;
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ import java.util.List;
  *
  * @author Manfred Huber
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface UserMapper {
 
     /** Maps a single model to a single DTO. */

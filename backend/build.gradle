@@ -4,16 +4,11 @@ dependencies {
     api project(':api')
 
     // Spring related dependencies
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-data-rest'
     implementation 'org.springframework.boot:spring-boot-starter-security'
-//    implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-//    implementation 'org.springframework.session:spring-session-core'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
-//    developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
     // H2 related dependencies
@@ -22,6 +17,9 @@ dependencies {
     // Mapstruct related dependencies
     implementation 'org.mapstruct:mapstruct:1.4.1.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.1.Final'
+
+    // Test dependencies
+    testCompile project(path: ':api', configuration: 'testArtifacts')
 }
 
 bootJar {

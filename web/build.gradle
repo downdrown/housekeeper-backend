@@ -5,11 +5,15 @@ dependencies {
     implementation project(':backend')
 
     // Spring related dependencies
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+    // Test dependencies
+    testCompile project(path: ':api', configuration: 'testArtifacts')
 }
 
 bootJar {

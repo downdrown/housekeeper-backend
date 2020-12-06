@@ -1,9 +1,8 @@
 package at.downdrown.housekeeper.be.controller;
 
-import at.downdrown.housekeeper.be.model.User;
-import at.downdrown.housekeeper.be.repository.UserRepository;
+import at.downdrown.housekeeper.api.dto.UserDTO;
+import at.downdrown.housekeeper.api.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * REST Controller for the {@link at.downdrown.housekeeper.be.model.User} entity.
+ * REST Controller for the {@link UserDTO}.
  *
  * @author Manfred Huber
  */
@@ -27,25 +26,21 @@ import java.util.List;
 @RequestMapping("user")
 public class UserController {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @Autowired
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserController(final UserService userService) {
+        this.userService = userService;
     }
 
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> create(@RequestBody User user) {
-        if (userRepository.existsByUsername(user.getUsername())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        } else {
-            return ResponseEntity.status(HttpStatus.CREATED).body(userRepository.save(user));
-        }
+    @PostMapping(value = "register", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserDTO> register(@RequestBody UserDTO user) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.register(user));
     }
 
     @GetMapping(value = "{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> findById(@PathVariable("username") String username) {
-        User user = userRepository.findByUsername(username);
+    public ResponseEntity<UserDTO> findById(@PathVariable("username") String username) {
+        UserDTO user = userService.findByUsername(username);
         if (user != null) {
             return ResponseEntity.ok(user);
         } else {
@@ -54,26 +49,18 @@ public class UserController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<User>> findAll() {
-        return ResponseEntity.ok(userRepository.findAll(Sort.by(Sort.Direction.ASC, "lastName", "firstName")));
+    public ResponseEntity<List<UserDTO>> findAll() {
+        return ResponseEntity.ok(userService.findAll());
     }
 
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> update(@RequestBody User user) {
-        if (userRepository.existsByUsername(user.getUsername())) {
-            return ResponseEntity.ok(userRepository.save(user));
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<UserDTO> update(@RequestBody UserDTO user) {
+        return ResponseEntity.ok(userService.update(user));
     }
 
     @DeleteMapping("{username}")
     public ResponseEntity<Void> delete(@PathVariable("username") String username) {
-        if (userRepository.existsByUsername(username)) {
-            userRepository.deleteByUsername(username);
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        userService.delete(username);
+        return ResponseEntity.ok().build();
     }
 }

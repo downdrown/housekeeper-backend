@@ -2,6 +2,7 @@ package at.downdrown.housekeeper.be.controller;
 
 import at.downdrown.housekeeper.TestBase;
 import at.downdrown.housekeeper.api.Role;
+import at.downdrown.housekeeper.api.dto.UserDTO;
 import at.downdrown.housekeeper.be.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -43,13 +44,14 @@ public class UserControllerTest extends TestBase {
     @Test
     public void shouldCreateUser() throws Exception {
 
-        User user = new User();
+        UserDTO user = new UserDTO();
         user.setUsername("maxi");
         user.setFirstName("Max");
         user.setLastName("Mustermann");
         user.setRole(Role.GUEST);
+        user.setRegistrationPassword("a-password");
 
-        mockMvc.perform(post("/user")
+        mockMvc.perform(post("/user/register")
             .contentType(MediaType.APPLICATION_JSON)
             .characterEncoding(StandardCharsets.UTF_8.name())
             .content(objectMapper.writeValueAsString(user)))
@@ -59,23 +61,8 @@ public class UserControllerTest extends TestBase {
             .andExpect(jsonPath("$.username").value("maxi"))
             .andExpect(jsonPath("$.firstName").value("Max"))
             .andExpect(jsonPath("$.lastName").value("Mustermann"))
-            .andExpect(jsonPath("$.role").value("GUEST"));
-    }
-
-    @Test
-    public void shouldFailOnCreateUser() throws Exception {
-
-        User user = new User();
-        user.setUsername(null); // triggers a fail
-        user.setFirstName("Max");
-        user.setLastName("Mustermann");
-        user.setRole(Role.GUEST);
-
-        mockMvc.perform(post("/user")
-            .contentType(MediaType.APPLICATION_JSON)
-            .characterEncoding(StandardCharsets.UTF_8.name())
-            .content(objectMapper.writeValueAsString(user)))
-            .andExpect(status().isInternalServerError());
+            .andExpect(jsonPath("$.role").value("GUEST"))
+            .andExpect(jsonPath("$.registrationPassword").doesNotExist());
     }
 
     @Test
@@ -88,7 +75,8 @@ public class UserControllerTest extends TestBase {
             .andExpect(jsonPath("$.username").value("admin"))
             .andExpect(jsonPath("$.firstName").value("Admin"))
             .andExpect(jsonPath("$.lastName").value("Admin"))
-            .andExpect(jsonPath("$.role").value("ADMIN"));
+            .andExpect(jsonPath("$.role").value("ADMIN"))
+            .andExpect(jsonPath("$.registrationPassword").doesNotExist());
     }
 
     @Test
@@ -109,16 +97,19 @@ public class UserControllerTest extends TestBase {
             .andExpect(jsonPath("$[0].firstName").value("Admin"))
             .andExpect(jsonPath("$[0].lastName").value("Admin"))
             .andExpect(jsonPath("$[0].role").value("ADMIN"))
+            .andExpect(jsonPath("$.registrationPassword").doesNotExist())
 
             .andExpect(jsonPath("$[1].username").value("guest"))
             .andExpect(jsonPath("$[1].firstName").value("Guest"))
             .andExpect(jsonPath("$[1].lastName").value("Guest"))
             .andExpect(jsonPath("$[1].role").value("GUEST"))
+            .andExpect(jsonPath("$.registrationPassword").doesNotExist())
 
             .andExpect(jsonPath("$[2].username").value("user"))
             .andExpect(jsonPath("$[2].firstName").value("User"))
             .andExpect(jsonPath("$[2].lastName").value("User"))
-            .andExpect(jsonPath("$[2].role").value("USER"));
+            .andExpect(jsonPath("$[2].role").value("USER"))
+            .andExpect(jsonPath("$.registrationPassword").doesNotExist());
     }
 
     @Test
@@ -134,7 +125,7 @@ public class UserControllerTest extends TestBase {
     @Sql(CREATE_USERS_SQL)
     public void shouldUpdateUser() throws Exception {
 
-        User user = new User();
+        UserDTO user = new UserDTO();
         user.setId(10L);
         user.setUsername("admin");
         user.setFirstName("Firstname");

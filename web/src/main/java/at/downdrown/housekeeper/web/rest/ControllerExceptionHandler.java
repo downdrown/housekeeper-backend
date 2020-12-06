@@ -1,4 +1,4 @@
-package at.downdrown.housekeeper.web.controller;
+package at.downdrown.housekeeper.web.rest;
 
 import at.downdrown.housekeeper.api.exception.ModelConflictException;
 import at.downdrown.housekeeper.api.exception.ModelNotFoundException;

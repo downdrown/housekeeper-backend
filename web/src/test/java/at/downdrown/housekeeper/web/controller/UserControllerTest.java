@@ -1,4 +1,4 @@
-package at.downdrown.housekeeper.be.controller;
+package at.downdrown.housekeeper.web.controller;
 
 import at.downdrown.housekeeper.TestBase;
 import at.downdrown.housekeeper.api.Role;
@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -33,6 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @SpringBootTest
 @ContextConfiguration
+@ComponentScan(basePackages = "at")
 @AutoConfigureTestDatabase
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -66,7 +68,7 @@ public class UserControllerTest extends TestBase {
     }
 
     @Test
-    @Sql(CREATE_USERS_SQL)
+    @Sql(TestBase.CREATE_USERS_SQL)
     public void shouldReadUser() throws Exception {
         mockMvc.perform(get("/user/admin"))
             .andExpect(status().isOk())
@@ -86,7 +88,7 @@ public class UserControllerTest extends TestBase {
     }
 
     @Test
-    @Sql(CREATE_USERS_SQL)
+    @Sql(TestBase.CREATE_USERS_SQL)
     public void shouldReadUsers() throws Exception {
         mockMvc.perform(get("/user"))
             .andExpect(status().isOk())
@@ -122,7 +124,7 @@ public class UserControllerTest extends TestBase {
     }
 
     @Test
-    @Sql(CREATE_USERS_SQL)
+    @Sql(TestBase.CREATE_USERS_SQL)
     public void shouldUpdateUser() throws Exception {
 
         UserDTO user = new UserDTO();

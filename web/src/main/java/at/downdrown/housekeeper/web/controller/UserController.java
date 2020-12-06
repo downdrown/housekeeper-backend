@@ -1,4 +1,4 @@
-package at.downdrown.housekeeper.be.controller;
+package at.downdrown.housekeeper.web.controller;
 
 import at.downdrown.housekeeper.api.dto.UserDTO;
 import at.downdrown.housekeeper.api.service.UserService;

@@ -1,4 +1,4 @@
-package at.downdrown.housekeeper.web;
+package at.downdrown.housekeeper;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

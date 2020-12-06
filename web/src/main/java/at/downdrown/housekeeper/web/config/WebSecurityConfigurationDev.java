@@ -1,4 +1,4 @@
-package at.downdrown.housekeeper.be.config;
+package at.downdrown.housekeeper.web.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -15,7 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @Profile("dev")
 @Configuration
 @EnableWebSecurity
-public class DevWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfigurationDev extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {

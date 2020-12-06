@@ -1,5 +1,6 @@
 package at.downdrown.housekeeper.web.config;
 
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -14,9 +15,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
  *
  * @author Manfred Huber
  */
-@Configuration
+@TestConfiguration
 @EnableWebSecurity
-public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfigurationTest extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {

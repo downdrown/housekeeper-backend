@@ -65,6 +65,7 @@ public class UserServiceTest extends TestBase {
     }
 
     @Test
+    @Sql(CREATE_USERS_SQL)
     void shouldFindAllUsers() {
         assertThat(userService.findAll()).hasSize(3);
     }

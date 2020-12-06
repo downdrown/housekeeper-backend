@@ -1,8 +1,8 @@
 package at.downdrown.housekeeper.be.repository;
 
 import at.downdrown.housekeeper.TestBase;
-import at.downdrown.housekeeper.be.model.Credential;
 import at.downdrown.housekeeper.api.Role;
+import at.downdrown.housekeeper.be.model.Credential;
 import at.downdrown.housekeeper.be.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

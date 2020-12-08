@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -32,6 +33,7 @@ public class UserServiceTest extends TestBase {
     private @Autowired UserRepository userRepository;
 
     @Test
+    @WithUserDetails("admin")
     void shouldRegisterUser() {
 
         UserDTO user = new UserDTO();
@@ -72,6 +74,7 @@ public class UserServiceTest extends TestBase {
 
     @Test
     @Sql(CREATE_USERS_SQL)
+    @WithUserDetails("admin")
     void shouldUpdateUser() {
 
         UserDTO user = userService.findByUsername("admin");
@@ -114,6 +117,7 @@ public class UserServiceTest extends TestBase {
 
     @Test
     @Sql(CREATE_USERS_SQL)
+    @WithUserDetails("admin")
     public void shouldDeleteUserByUsername() {
         assertThat(userService.findByUsername("admin")).isNotNull();
         userService.delete("admin");

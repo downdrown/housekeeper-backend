@@ -1,11 +1,17 @@
 package at.downdrown.housekeeper.web.config;
 
+import at.downdrown.housekeeper.api.Role;
+import at.downdrown.housekeeper.api.service.GrantedAuthorityService;
+import at.downdrown.housekeeper.be.mock.MockUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.firewall.HttpFirewall;
 
 /**
@@ -22,10 +28,17 @@ import org.springframework.security.web.firewall.HttpFirewall;
 public class WebSecurityConfigurationTest extends WebSecurityConfigurerAdapter {
 
     private final HttpFirewall httpFirewall;
+    private final PasswordEncoder passwordEncoder;
+    private final MockUserDetailsService mockUserDetailsService;
 
     @Autowired
-    public WebSecurityConfigurationTest(HttpFirewall httpFirewall) {
+    public WebSecurityConfigurationTest(
+        final HttpFirewall httpFirewall,
+        final PasswordEncoder passwordEncoder,
+        final MockUserDetailsService mockUserDetailsService) {
         this.httpFirewall = httpFirewall;
+        this.passwordEncoder = passwordEncoder;
+        this.mockUserDetailsService = mockUserDetailsService;
     }
 
     @Override
@@ -37,6 +50,18 @@ public class WebSecurityConfigurationTest extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
             .csrf().disable()
-            .cors().disable();
+            .cors().disable()
+            .authorizeRequests()
+            .anyRequest()
+            .fullyAuthenticated()
+        .and()
+            .httpBasic();
+    }
+
+    @Autowired
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth
+            .userDetailsService(mockUserDetailsService)
+            .passwordEncoder(passwordEncoder);
     }
 }

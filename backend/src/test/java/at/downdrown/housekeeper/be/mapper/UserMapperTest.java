@@ -30,26 +30,24 @@ public class UserMapperTest {
     @Test
     void shouldMapToModel() {
 
-        final ZonedDateTime lastLogin = ZonedDateTime.now();
-
         UserDTO dto = new UserDTO();
         dto.setId(1L);
         dto.setUsername("a-username");
         dto.setFirstName("a-firstname");
         dto.setLastName("a-lastname");
         dto.setRole(Role.USER);
-        dto.setLastLogin(lastLogin);
+        dto.setLastLogin(ZonedDateTime.now());
 
         assertThat(mapper.toModel(dto))
             .isNotNull()
             .extracting(User::getId, User::getUsername, User::getFirstName, User::getLastName, User::getRole, User::getLastLogin)
-            .containsExactly(1L, "a-username", "a-firstname", "a-lastname", Role.USER, lastLogin);
+            .containsExactly(1L, "a-username", "a-firstname", "a-lastname", Role.USER, null);
 
         assertThat(mapper.toModel(List.of(dto)))
             .isNotEmpty()
             .first()
             .extracting(User::getId, User::getUsername, User::getFirstName, User::getLastName, User::getRole, User::getLastLogin)
-            .containsExactly(1L, "a-username", "a-firstname", "a-lastname", Role.USER, lastLogin);
+            .containsExactly(1L, "a-username", "a-firstname", "a-lastname", Role.USER, null);
     }
 
     @Test

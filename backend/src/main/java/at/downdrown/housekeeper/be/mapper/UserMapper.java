@@ -20,6 +20,7 @@ public interface UserMapper {
     UserDTO toDto(User user);
 
     /** Maps a single DTO to a single model. */
+    @Mapping(target = "lastLogin", ignore = true)
     User toModel(UserDTO dto);
 
     /** Maps a {@link List} of models to a {@link List} of DTOs. */

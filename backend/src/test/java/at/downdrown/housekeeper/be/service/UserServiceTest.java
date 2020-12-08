@@ -93,12 +93,10 @@ public class UserServiceTest extends TestBase {
                 Role.ADMIN,
                 null);
 
-        ZonedDateTime login = ZonedDateTime.now();
-
         user.setFirstName("a-new-firstname");
         user.setLastName("a-new-lastname");
         user.setRole(Role.GUEST);
-        user.setLastLogin(login);
+        user.setLastLogin(ZonedDateTime.now());
 
         assertThat(userService.update(user))
             .extracting(
@@ -112,7 +110,7 @@ public class UserServiceTest extends TestBase {
                 "a-new-firstname",
                 "a-new-lastname",
                 Role.GUEST,
-                login);
+                null);
     }
 
     @Test

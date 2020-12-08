@@ -41,7 +41,4 @@ public class Credential implements Serializable {
     @Column(name = "PASSWORD", length = SHORT_COLUMN_LENGTH, nullable = false)
     private String password;
 
-    @Column(name = "SALT", length = SHORT_COLUMN_LENGTH, nullable = false)
-    private String salt;
-
 }

@@ -46,15 +46,14 @@ public class CredentialRepositoryTest extends TestBase {
         Credential credential = new Credential();
         credential.setUser(user);
         credential.setPassword("a-password");
-        credential.setSalt("a-salt");
 
         credentialRepository.save(credential);
         credentialRepository.flush();
 
         assertThat(credentialRepository.findByUsername("max"))
             .isNotNull()
-            .extracting(Credential::getId, Credential::getUser, Credential::getPassword, Credential::getSalt)
-            .containsExactly(1000L, user, "a-password", "a-salt");
+            .extracting(Credential::getId, Credential::getUser, Credential::getPassword)
+            .containsExactly(1000L, user, "a-password");
     }
 
     @Test
@@ -69,7 +68,6 @@ public class CredentialRepositoryTest extends TestBase {
             Credential credential = new Credential();
             credential.setUser(user);
             credential.setPassword("a-password");
-            credential.setSalt("a-salt");
 
             credentialRepository.save(credential);
             credentialRepository.flush();
@@ -103,19 +101,18 @@ public class CredentialRepositoryTest extends TestBase {
 
         assertThat(credential)
             .isNotNull()
-            .extracting(Credential::getId, Credential::getUser, Credential::getPassword, Credential::getSalt)
-            .containsExactly(10L, user, "a-password", "a-salt");
+            .extracting(Credential::getId, Credential::getUser, Credential::getPassword)
+            .containsExactly(10L, user, "a-password");
 
         credential.setPassword("a-new-password");
-        credential.setSalt("a-new-salt");
 
         credentialRepository.save(credential);
         credentialRepository.flush();
 
         assertThat(credentialRepository.findByUsername("admin"))
             .isNotNull()
-            .extracting(Credential::getId, Credential::getUser, Credential::getPassword, Credential::getSalt)
-            .containsExactly(10L, user, "a-new-password", "a-new-salt");
+            .extracting(Credential::getId, Credential::getUser, Credential::getPassword)
+            .containsExactly(10L, user, "a-new-password");
     }
 
     @Test

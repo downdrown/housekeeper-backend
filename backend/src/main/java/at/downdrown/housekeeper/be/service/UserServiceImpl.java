@@ -11,6 +11,7 @@ import at.downdrown.housekeeper.be.repository.CredentialRepository;
 import at.downdrown.housekeeper.be.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,15 +29,18 @@ import static at.downdrown.housekeeper.api.exception.ExceptionUtils.throwIf;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
     private final CredentialRepository credentialRepository;
+    private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
+    private final UserRepository userRepository;
 
     @Autowired
     public UserServiceImpl(
-        final UserRepository userRepository,
         final CredentialRepository credentialRepository,
-        final UserMapper userMapper) {
+        final PasswordEncoder passwordEncoder,
+        final UserMapper userMapper,
+        final UserRepository userRepository) {
+        this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.credentialRepository = credentialRepository;
         this.userMapper = userMapper;
@@ -53,8 +57,7 @@ public class UserServiceImpl implements UserService {
 
         Credential credential = new Credential();
         credential.setUser(saved);
-        credential.setPassword(user.getRegistrationPassword());
-        credential.setSalt("a-salt");
+        credential.setPassword(passwordEncoder.encode(user.getRegistrationPassword()));
 
         credentialRepository.save(credential);
 

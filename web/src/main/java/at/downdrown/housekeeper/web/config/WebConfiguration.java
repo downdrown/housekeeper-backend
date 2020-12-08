@@ -1,9 +1,12 @@
 package at.downdrown.housekeeper.web.config;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.web.firewall.HttpFirewall;
+import org.springframework.security.web.firewall.StrictHttpFirewall;
 
 /**
  * Web module configuration bean.
@@ -19,5 +22,9 @@ import org.springframework.context.annotation.Import;
     WebSecurityConfigurationProd.class
 })
 public class WebConfiguration {
-    // Declare web bean definitions if necessary
+
+    @Bean
+    public HttpFirewall httpFirewall() {
+        return new StrictHttpFirewall();
+    }
 }

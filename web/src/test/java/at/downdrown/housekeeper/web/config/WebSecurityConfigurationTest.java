@@ -1,10 +1,12 @@
 package at.downdrown.housekeeper.web.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.firewall.HttpFirewall;
 
 /**
  * Web-Security related configuration bean for unit-tests.
@@ -18,6 +20,18 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @TestConfiguration
 @EnableWebSecurity
 public class WebSecurityConfigurationTest extends WebSecurityConfigurerAdapter {
+
+    private final HttpFirewall httpFirewall;
+
+    @Autowired
+    public WebSecurityConfigurationTest(HttpFirewall httpFirewall) {
+        this.httpFirewall = httpFirewall;
+    }
+
+    @Override
+    public void configure(WebSecurity web) {
+        web.httpFirewall(httpFirewall);
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {

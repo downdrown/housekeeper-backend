@@ -35,16 +35,20 @@ public class GrantedAuthorityServiceTest {
     @Test
     void shouldCalculateAdminAuthorities() {
         assertThat(grantedAuthorityService.calculateAuthoritiesForRole(Role.ADMIN))
-            .hasSize(3)
+            .hasSize(6)
             .map(GrantedAuthority::getAuthority)
-            .contains(Permission.CREATE_USER, Permission.UPDATE_USER, Permission.DELETE_USER);
+            .contains(
+                Permission.CREATE_AVATAR, Permission.UPDATE_AVATAR, Permission.DELETE_AVATAR,
+                Permission.CREATE_USER, Permission.UPDATE_USER, Permission.DELETE_USER
+            );
     }
 
     @Test
     void shouldCalculateUserAuthorities() {
         assertThat(grantedAuthorityService.calculateAuthoritiesForRole(Role.USER))
-            .isNotNull()
-            .isEmpty();
+            .hasSize(3)
+            .map(GrantedAuthority::getAuthority)
+            .contains(Permission.CREATE_AVATAR, Permission.UPDATE_AVATAR, Permission.DELETE_AVATAR);
     }
 
     @Test

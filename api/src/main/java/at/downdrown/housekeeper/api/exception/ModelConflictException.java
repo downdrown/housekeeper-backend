@@ -6,5 +6,12 @@ package at.downdrown.housekeeper.api.exception;
  * @author Manfred Huber
  */
 public class ModelConflictException extends DataException {
-    // no-op
+
+    public ModelConflictException() {
+        this("");
+    }
+
+    public ModelConflictException(String messageKey) {
+        super(messageKey);
+    }
 }

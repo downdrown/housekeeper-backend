@@ -6,5 +6,12 @@ package at.downdrown.housekeeper.api.exception;
  * @author Manfred Huber
  */
 public class ModelNotFoundException extends DataException {
-    // no-op
+
+    public ModelNotFoundException() {
+        this("");
+    }
+
+    public ModelNotFoundException(String messageKey) {
+        super(messageKey);
+    }
 }

@@ -3,6 +3,7 @@ package at.downdrown.housekeeper.be.mapper;
 import at.downdrown.housekeeper.api.dto.AvatarDTO;
 import at.downdrown.housekeeper.be.model.Avatar;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import java.util.List;
 
@@ -18,6 +19,7 @@ public interface AvatarMapper {
     AvatarDTO toDto(Avatar user);
 
     /** Maps a single DTO to a single model. */
+    @Mapping(target = "user", ignore = true)
     Avatar toModel(AvatarDTO dto);
 
     /** Maps a {@link List} of models to a {@link List} of DTOs. */

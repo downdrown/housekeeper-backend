@@ -4,12 +4,14 @@ import at.downdrown.housekeeper.be.model.Credential;
 import at.downdrown.housekeeper.be.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 /**
  * Data repository for the {@link Credential} model.
  *
  * @author Manfred Huber
  */
+@Repository
 public interface CredentialRepository extends JpaRepository<Credential, Long> {
 
     /**

@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Secured(Permission.CREATE_USER)
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional
     public UserDTO register(UserDTO user) {
 
         throwIf(userRepository.existsByUsername(user.getUsername()), ModelConflictException::new);
@@ -79,7 +79,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Secured(Permission.UPDATE_USER)
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional
     public UserDTO update(UserDTO user) {
         throwIf(!userRepository.existsByUsername(user.getUsername()), ModelNotFoundException::new);
         User model = userRepository.save(userMapper.toModel(user));
@@ -88,7 +88,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Secured(Permission.DELETE_USER)
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional
     public void delete(String username) {
         throwIf(!userRepository.existsByUsername(username), ModelNotFoundException::new);
         userRepository.deleteByUsername(username);

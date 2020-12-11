@@ -19,6 +19,10 @@ import java.util.Set;
 @Service
 public class GrantedAuthorityServiceImpl implements GrantedAuthorityService {
 
+    private static final GrantedAuthority CREATE_AVATAR = new SimpleGrantedAuthority(Permission.CREATE_AVATAR);
+    private static final GrantedAuthority UPDATE_AVATAR = new SimpleGrantedAuthority(Permission.UPDATE_AVATAR);
+    private static final GrantedAuthority DELETE_AVATAR = new SimpleGrantedAuthority(Permission.DELETE_AVATAR);
+
     private static final GrantedAuthority CREATE_USER = new SimpleGrantedAuthority(Permission.CREATE_USER);
     private static final GrantedAuthority UPDATE_USER = new SimpleGrantedAuthority(Permission.UPDATE_USER);
     private static final GrantedAuthority DELETE_USER = new SimpleGrantedAuthority(Permission.DELETE_USER);
@@ -31,12 +35,13 @@ public class GrantedAuthorityServiceImpl implements GrantedAuthorityService {
         switch (role) {
             case ADMIN:
                 return Set.of(
-                    CREATE_USER,
-                    UPDATE_USER,
-                    DELETE_USER
+                    CREATE_AVATAR, UPDATE_AVATAR, DELETE_AVATAR,
+                    CREATE_USER, UPDATE_USER, DELETE_USER
                 );
             case USER:
-                return Collections.emptySet();
+                return Set.of(
+                    CREATE_AVATAR, UPDATE_AVATAR, DELETE_AVATAR
+                );
             case GUEST:
                 return Collections.emptySet();
             default:

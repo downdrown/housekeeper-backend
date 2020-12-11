@@ -1,5 +1,7 @@
 package at.downdrown.housekeeper.api.exception;
 
+import lombok.Getter;
+
 /**
  * Base class for all data-related exceptions.
  * Data exceptions are thrown as {@link RuntimeException}s since most of the time
@@ -7,6 +9,14 @@ package at.downdrown.housekeeper.api.exception;
  *
  * @author Manfred Huber
  */
+@Getter
 abstract class DataException extends RuntimeException {
-    // no-op, just provide a 'base' class for better abstraction
+
+    /** The error message key that can be evaluated on the client side. */
+    private final String messageKey;
+
+    protected DataException(String messageKey) {
+        this.messageKey = messageKey;
+    }
+
 }

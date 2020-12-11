@@ -2,12 +2,14 @@ package at.downdrown.housekeeper.be.repository;
 
 import at.downdrown.housekeeper.be.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 /**
  * Data repository for the {@link User} model.
  *
  * @author Manfred Huber
  */
+@Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
     /**

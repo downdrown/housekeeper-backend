@@ -1,6 +1,7 @@
 package at.downdrown.housekeeper.api.service;
 
 import at.downdrown.housekeeper.api.dto.AvatarDTO;
+import at.downdrown.housekeeper.api.exception.ModelNotFoundException;
 
 /**
  * Business layer service for the Avatar model.
@@ -15,8 +16,11 @@ public interface AvatarService {
      *
      * @param username the username of the user whose avatar should be set.
      * @param avatar the {@link AvatarDTO} containing all necessary data.
+     * @throws ModelNotFoundException if no user with the given username was found.
+     * @throws IllegalArgumentException if the AvatarDTO has an invalid contentType.
+     *                                  Allowed types are image/jpeg and image/png.
      */
-    void setAvatarForUser(String username, AvatarDTO avatar);
+    void setAvatarForUser(String username, AvatarDTO avatar) throws ModelNotFoundException, IllegalArgumentException;
 
     /**
      * Fetches the avatar for the user with the given {@code username} from the backend.

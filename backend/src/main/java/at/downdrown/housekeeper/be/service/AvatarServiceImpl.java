@@ -10,11 +10,15 @@ import at.downdrown.housekeeper.be.model.User;
 import at.downdrown.housekeeper.be.repository.AvatarRepository;
 import at.downdrown.housekeeper.be.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
+import java.util.Set;
+
+import static at.downdrown.housekeeper.api.exception.ExceptionUtils.throwIf;
 
 /**
  * @author Manfred Huber
@@ -28,6 +32,8 @@ public class AvatarServiceImpl implements AvatarService {
     private final AvatarMapper avatarMapper;
     private final AvatarRepository avatarRepository;
     private final UserRepository userRepository;
+
+    private static final Set<String> ALLOWED_CONTENT_TYPES = Set.of(MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE);
 
     @Autowired
     public AvatarServiceImpl(
@@ -49,9 +55,8 @@ public class AvatarServiceImpl implements AvatarService {
         // Fetch the user from the backend
         final User user = userRepository.findByUsername(username);
 
-        if (user == null) {
-            throw new ModelNotFoundException("user.notfound");
-        }
+        throwIf(user == null, () -> new ModelNotFoundException("user.notfound"));
+        throwIf(!ALLOWED_CONTENT_TYPES.contains(avatar.getContentType()), () -> new IllegalArgumentException("Invalid content type"));
 
         final Avatar existingAvatar = avatarRepository.findByUsername(username);
         if (existingAvatar != null) {
@@ -71,6 +76,7 @@ public class AvatarServiceImpl implements AvatarService {
 
     @Override
     @Secured(Permission.DELETE_AVATAR)
+    @Transactional
     public void deleteAvatarForUser(String username) {
         if (userRepository.existsByUsername(username)) {
             Avatar avatar = avatarRepository.findByUsername(username);

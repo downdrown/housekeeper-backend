@@ -12,6 +12,9 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
+    // JWT dependencies
+    implementation 'com.auth0:java-jwt:3.11.0'
+
     // Test dependencies
     testCompile project(path: ':api', configuration: 'testArtifacts')
     testCompile project(path: ':backend', configuration: 'testArtifacts')

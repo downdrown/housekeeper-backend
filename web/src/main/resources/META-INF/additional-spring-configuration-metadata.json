@@ -1,0 +1,24 @@
+{
+  "properties": [
+    {
+      "name": "security.token.tokenissuer",
+      "type": "java.lang.String",
+      "description": "Token issuer."
+    },
+    {
+      "name": "security.token.tokensigningkey",
+      "type": "java.lang.String",
+      "description": "Key that is used to sign the token."
+    },
+    {
+      "name": "security.token.tokenexpirationtime",
+      "type": "java.lang.Integer",
+      "description": "Token expiration time in seconds."
+    },
+    {
+      "name": "security.token.refreshtokenexpirationtime",
+      "type": "java.lang.Integer",
+      "description": "Refreshtoken expiration time in seconds."
+    }
+  ]
+}

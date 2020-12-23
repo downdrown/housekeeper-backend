@@ -102,7 +102,7 @@ public class CredentialRepositoryTest extends TestBase {
         assertThat(credential)
             .isNotNull()
             .extracting(Credential::getId, Credential::getUser, Credential::getPassword)
-            .containsExactly(10L, user, "a-password");
+            .containsExactly(10L, user, "$2a$10$umThkjstS0ZuSaUmvyxkfucpi2wHH3q6y/8U.Sit8SNjVOAPeMjgi");
 
         credential.setPassword("a-new-password");
 

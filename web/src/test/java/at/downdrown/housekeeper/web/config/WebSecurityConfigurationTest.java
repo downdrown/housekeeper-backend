@@ -1,16 +1,17 @@
 package at.downdrown.housekeeper.web.config;
 
-import at.downdrown.housekeeper.api.Role;
-import at.downdrown.housekeeper.api.service.GrantedAuthorityService;
 import at.downdrown.housekeeper.be.mock.MockUserDetailsService;
+import at.downdrown.housekeeper.web.security.jwt.TokenEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.firewall.HttpFirewall;
 
@@ -32,10 +33,9 @@ public class WebSecurityConfigurationTest extends WebSecurityConfigurerAdapter {
     private final MockUserDetailsService mockUserDetailsService;
 
     @Autowired
-    public WebSecurityConfigurationTest(
-        final HttpFirewall httpFirewall,
-        final PasswordEncoder passwordEncoder,
-        final MockUserDetailsService mockUserDetailsService) {
+    public WebSecurityConfigurationTest(final HttpFirewall httpFirewall,
+                                        final PasswordEncoder passwordEncoder,
+                                        final MockUserDetailsService mockUserDetailsService) {
         this.httpFirewall = httpFirewall;
         this.passwordEncoder = passwordEncoder;
         this.mockUserDetailsService = mockUserDetailsService;
@@ -51,6 +51,12 @@ public class WebSecurityConfigurationTest extends WebSecurityConfigurerAdapter {
         http
             .csrf().disable()
             .cors().disable()
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        .and()
+            .authorizeRequests()
+            .antMatchers(TokenEndpoint.URL_PATTERN)
+            .permitAll()
+        .and()
             .authorizeRequests()
             .anyRequest()
             .fullyAuthenticated()
@@ -63,5 +69,14 @@ public class WebSecurityConfigurationTest extends WebSecurityConfigurerAdapter {
         auth
             .userDetailsService(mockUserDetailsService)
             .passwordEncoder(passwordEncoder);
+    }
+
+    /**
+     * Exposes the {@link AuthenticationManager} as Spring bean.
+     */
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 }

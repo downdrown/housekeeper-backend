@@ -30,7 +30,9 @@ public class LoginListener implements ApplicationListener<AuthenticationSuccessE
     @Transactional(propagation = Propagation.REQUIRED)
     public void onApplicationEvent(AuthenticationSuccessEvent event) {
         final User user = userRepository.findByUsername(event.getAuthentication().getName());
-        user.setLastLogin(ZonedDateTime.now());
-        userRepository.save(user);
+        if (user != null) {
+            user.setLastLogin(ZonedDateTime.now());
+            userRepository.save(user);
+        }
     }
 }

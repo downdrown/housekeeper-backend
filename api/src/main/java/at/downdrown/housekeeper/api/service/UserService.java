@@ -49,4 +49,15 @@ public interface UserService {
      */
     void delete(String username);
 
+    /**
+     * Updates the user's password.
+     * Validates if the given {@code oldPassword} is valid and updates the user's password if so.
+     *
+     * @param username the username of the user whose password should be changed.
+     * @param oldPassword the old (current) password of the user.
+     * @param newPassword the new password to be set.
+     * @throws IllegalArgumentException if the given {@code oldPassword} is incorrect.
+     */
+    void changePassword(String username, String oldPassword, String newPassword) throws IllegalArgumentException;
+
 }

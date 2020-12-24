@@ -14,6 +14,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 
 import static at.downdrown.housekeeper.be.model.FieldConstants.SHORT_COLUMN_LENGTH;
 
@@ -40,5 +41,8 @@ public class Credential implements Serializable {
 
     @Column(name = "PASSWORD", length = SHORT_COLUMN_LENGTH, nullable = false)
     private String password;
+
+    @Column(name = "LAST_CHANGE")
+    private ZonedDateTime lastChange;
 
 }

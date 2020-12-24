@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import static at.downdrown.housekeeper.api.exception.ExceptionUtils.throwIf;
@@ -92,5 +93,18 @@ public class UserServiceImpl implements UserService {
     public void delete(String username) {
         throwIf(!userRepository.existsByUsername(username), ModelNotFoundException::new);
         userRepository.deleteByUsername(username);
+    }
+
+    @Override
+    @Secured(Permission.UPDATE_USER)
+    @Transactional
+    public void changePassword(String username, String oldPassword, String newPassword) throws IllegalArgumentException {
+        throwIf(!userRepository.existsByUsername(username), ModelNotFoundException::new);
+        Credential credential = credentialRepository.findByUsername(username);
+        throwIf(!passwordEncoder.matches(oldPassword, credential.getPassword()), IllegalArgumentException::new);
+
+        credential.setPassword(passwordEncoder.encode(newPassword));
+        credential.setLastChange(ZonedDateTime.now());
+        credentialRepository.save(credential);
     }
 }

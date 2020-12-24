@@ -18,6 +18,8 @@ import org.springframework.test.context.jdbc.Sql;
 import java.time.ZonedDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
@@ -31,7 +33,7 @@ public class UserServiceTest extends TestBase {
     @Test
     @Sql(CREATE_USERS_SQL)
     @WithUserDetails("admin")
-    void shouldRegisterUser() {
+    public void shouldRegisterUser() {
 
         UserDTO user = new UserDTO();
         user.setUsername("maxi");
@@ -51,7 +53,7 @@ public class UserServiceTest extends TestBase {
 
     @Test
     @Sql(CREATE_USERS_SQL)
-    void shouldFindUserByUsername() {
+    public void shouldFindUserByUsername() {
         assertThat(userService.findByUsername("admin"))
             .isNotNull()
             .extracting(UserDTO::getId, UserDTO::getUsername, UserDTO::getFirstName, UserDTO::getLastName, UserDTO::getRole)
@@ -59,20 +61,20 @@ public class UserServiceTest extends TestBase {
     }
 
     @Test
-    void shouldFindNullByUsername() {
+    public void shouldFindNullByUsername() {
         assertThat(userService.findByUsername("a-nonexistet-user")).isNull();
     }
 
     @Test
     @Sql(CREATE_USERS_SQL)
-    void shouldFindAllUsers() {
+    public void shouldFindAllUsers() {
         assertThat(userService.findAll()).hasSize(3);
     }
 
     @Test
     @Sql(CREATE_USERS_SQL)
     @WithUserDetails("admin")
-    void shouldUpdateUser() {
+    public void shouldUpdateUser() {
 
         UserDTO user = userService.findByUsername("admin");
         assertThat(user)
@@ -117,5 +119,28 @@ public class UserServiceTest extends TestBase {
         assertThat(userService.findByUsername("admin")).isNotNull();
         userService.delete("admin");
         assertThat(userService.findByUsername("admin")).isNull();
+    }
+
+    @Test
+    @Sql(CREATE_USERS_SQL)
+    @WithUserDetails("admin")
+    public void shouldChangeUserPassword() {
+        userService.changePassword("admin", "password", "new-password!");
+        Credential credential = credentialRepository.findByUsername("admin");
+        assertTrue(passwordEncoder.matches("new-password!", credential.getPassword()), "Should update the user's password");
+        assertThat(credential.getLastChange())
+            .withFailMessage("Should have an 'lastChange' date that is just now")
+            .isNotNull()
+            .isBetween(ZonedDateTime.now().minusMinutes(1), ZonedDateTime.now());
+    }
+
+    @Test
+    @Sql(CREATE_USERS_SQL)
+    @WithUserDetails("admin")
+    public void shouldChangeUserPasswordAndFailByMismatchingPassword() {
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> userService.changePassword("admin", "a-non-matching-password", "new-password!"),
+            "Should fail with a non-matching password");
     }
 }

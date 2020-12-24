@@ -13,14 +13,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
-@ContextConfiguration
 @AutoConfigureTestDatabase
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class AvatarServiceTest extends TestBase {
@@ -75,6 +73,7 @@ public class AvatarServiceTest extends TestBase {
     }
 
     @Test
+    @Sql(CREATE_USERS_SQL)
     @WithUserDetails("admin")
     void shouldSetAvatarForUser_FailByNonExistentUser() {
         ModelNotFoundException expectedException = assertThrows(
@@ -85,6 +84,7 @@ public class AvatarServiceTest extends TestBase {
     }
 
     @Test
+    @Sql(CREATE_USERS_SQL)
     @WithUserDetails("guest")
     void shouldSetAvatarForUser_FailByAccessDeniedException() {
         assertThrows(AccessDeniedException.class, () -> avatarService.setAvatarForUser("admin", new AvatarDTO()));
@@ -118,12 +118,14 @@ public class AvatarServiceTest extends TestBase {
     }
 
     @Test
+    @Sql(CREATE_USERS_SQL)
     @WithUserDetails("guest")
     void shouldDeleteAvatar_FailByAccessDeniedException() {
         assertThrows(AccessDeniedException.class, () -> avatarService.deleteAvatarForUser("admin"));
     }
 
     @Test
+    @Sql(CREATE_USERS_SQL)
     @WithUserDetails("admin")
     void shouldDeleteAvatar_WithNonExistentUser() {
         avatarService.deleteAvatarForUser("a-non-existent-user");

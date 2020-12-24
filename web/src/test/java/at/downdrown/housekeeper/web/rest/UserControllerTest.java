@@ -1,6 +1,7 @@
 package at.downdrown.housekeeper.web.rest;
 
 import at.downdrown.housekeeper.TestBase;
+import at.downdrown.housekeeper.api.Permission;
 import at.downdrown.housekeeper.api.Role;
 import at.downdrown.housekeeper.api.dto.UserDTO;
 import at.downdrown.housekeeper.be.model.User;
@@ -11,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
@@ -42,6 +44,7 @@ public class UserControllerTest extends TestBase {
     private @Autowired ObjectMapper objectMapper;
 
     @Test
+    @Sql(CREATE_USERS_SQL)
     public void shouldCreateUser() throws Exception {
 
         UserDTO user = new UserDTO();
@@ -66,7 +69,7 @@ public class UserControllerTest extends TestBase {
     }
 
     @Test
-    @Sql(TestBase.CREATE_USERS_SQL)
+    @Sql(CREATE_USERS_SQL)
     public void shouldReadUser() throws Exception {
         mockMvc.perform(get("/user/admin"))
             .andExpect(status().isOk())
@@ -80,13 +83,14 @@ public class UserControllerTest extends TestBase {
     }
 
     @Test
+    @Sql(CREATE_USERS_SQL)
     public void shouldFailOnReadUser() throws Exception {
         mockMvc.perform(get("/user/a-non-existent-user"))
             .andExpect(status().isNotFound());
     }
 
     @Test
-    @Sql(TestBase.CREATE_USERS_SQL)
+    @Sql(CREATE_USERS_SQL)
     public void shouldReadUsers() throws Exception {
         mockMvc.perform(get("/user"))
             .andExpect(status().isOk())
@@ -113,6 +117,7 @@ public class UserControllerTest extends TestBase {
     }
 
     @Test
+    @WithMockUser
     public void shouldReadUsersWithNoContent() throws Exception {
         mockMvc.perform(get("/user"))
             .andExpect(status().isOk())
@@ -122,7 +127,7 @@ public class UserControllerTest extends TestBase {
     }
 
     @Test
-    @Sql(TestBase.CREATE_USERS_SQL)
+    @Sql(CREATE_USERS_SQL)
     public void shouldUpdateUser() throws Exception {
 
         UserDTO user = new UserDTO();
@@ -146,7 +151,7 @@ public class UserControllerTest extends TestBase {
     }
 
     @Test
-
+    @WithMockUser(authorities = Permission.UPDATE_USER)
     public void shouldFailOnUpdateUser() throws Exception {
 
         User user = new User();

@@ -77,7 +77,6 @@ public class CredentialRepositoryTest extends TestBase {
 
     @Test
     @Sql(CREATE_USERS_SQL)
-    @Sql(CREATE_CREDENTIALS_SQL)
     public void shouldReadCredentialByUsername() {
         assertThat(credentialRepository.findByUsername("admin")).isNotNull();
         assertThat(credentialRepository.findByUsername("user")).isNotNull();
@@ -86,14 +85,12 @@ public class CredentialRepositoryTest extends TestBase {
 
     @Test
     @Sql(CREATE_USERS_SQL)
-    @Sql(CREATE_CREDENTIALS_SQL)
     public void shouldReadCredentals() {
         assertThat(credentialRepository.findAll()).hasSize(3);
     }
 
     @Test
     @Sql(CREATE_USERS_SQL)
-    @Sql(CREATE_CREDENTIALS_SQL)
     public void shouldUpdateCredential() {
 
         User user = userRepository.findByUsername("admin");
@@ -117,7 +114,6 @@ public class CredentialRepositoryTest extends TestBase {
 
     @Test
     @Sql(CREATE_USERS_SQL)
-    @Sql(CREATE_CREDENTIALS_SQL)
     public void shouldDeleteCredential() {
         assertThat(credentialRepository.findByUsername("admin")).isNotNull();
         credentialRepository.delete(credentialRepository.findByUsername("admin"));

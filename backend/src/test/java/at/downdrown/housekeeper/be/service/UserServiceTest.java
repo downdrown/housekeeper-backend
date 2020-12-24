@@ -6,7 +6,6 @@ import at.downdrown.housekeeper.api.dto.UserDTO;
 import at.downdrown.housekeeper.api.service.UserService;
 import at.downdrown.housekeeper.be.model.Credential;
 import at.downdrown.housekeeper.be.repository.CredentialRepository;
-import at.downdrown.housekeeper.be.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -14,7 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.time.ZonedDateTime;
@@ -22,7 +20,6 @@ import java.time.ZonedDateTime;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@ContextConfiguration
 @AutoConfigureTestDatabase
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class UserServiceTest extends TestBase {
@@ -30,9 +27,9 @@ public class UserServiceTest extends TestBase {
     private @Autowired CredentialRepository credentialRepository;
     private @Autowired PasswordEncoder passwordEncoder;
     private @Autowired UserService userService;
-    private @Autowired UserRepository userRepository;
 
     @Test
+    @Sql(CREATE_USERS_SQL)
     @WithUserDetails("admin")
     void shouldRegisterUser() {
 

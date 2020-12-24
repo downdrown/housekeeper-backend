@@ -1,7 +1,6 @@
 package at.downdrown.housekeeper.be.service;
 
 import at.downdrown.housekeeper.TestBase;
-import at.downdrown.housekeeper.be.mock.MockUserDetailsService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -31,10 +30,11 @@ public class UserDetailsServiceTest extends TestBase {
 
     @Test
     void shouldCheckForCorrectImplementation() {
-        assertThat(userDetailsService).isInstanceOf(MockUserDetailsService.class);
+        assertThat(userDetailsService).isInstanceOf(UserDetailsServiceImpl.class);
     }
 
     @Test
+    @Sql(CREATE_USERS_SQL)
     void shouldReturnUserDetails() {
         UserDetails user = userDetailsService.loadUserByUsername("admin");
         assertThat(user)

@@ -166,4 +166,26 @@ public class UserControllerTest extends TestBase {
             .content(objectMapper.writeValueAsString(user)))
             .andExpect(status().isNotFound());
     }
+
+    @Test
+    @Sql(CREATE_USERS_SQL)
+    @WithUserDetails("admin")
+    public void shouldChangePassword() throws Exception {
+        mockMvc.perform(put("/user/admin/password")
+            .contentType(MediaType.APPLICATION_JSON)
+            .characterEncoding(StandardCharsets.UTF_8.name())
+            .content("{\"currentPassword\":\"password\", \"newPassword\":\"a-new-password\"}"))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    @Sql(CREATE_USERS_SQL)
+    @WithUserDetails("admin")
+    public void shouldFailOnChangePassword() throws Exception {
+        mockMvc.perform(put("/user/admin/password")
+            .contentType(MediaType.APPLICATION_JSON)
+            .characterEncoding(StandardCharsets.UTF_8.name())
+            .content("{\"currentPassword\":\"a-wrong-password\", \"newPassword\":\"a-new-password\"}"))
+            .andExpect(status().isUnauthorized());
+    }
 }

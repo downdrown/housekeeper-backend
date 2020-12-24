@@ -2,10 +2,13 @@ package at.downdrown.housekeeper.web.rest;
 
 import at.downdrown.housekeeper.api.dto.UserDTO;
 import at.downdrown.housekeeper.api.service.UserService;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -62,5 +65,22 @@ public class UserController {
     public ResponseEntity<Void> delete(@PathVariable("username") String username) {
         userService.delete(username);
         return ResponseEntity.ok().build();
+    }
+
+    @PutMapping(value = "{username}/password")
+    public ResponseEntity<Void> updateUserPassword(@PathVariable("username") String username, @RequestBody ChangePasswordRequest request) {
+        try {
+            userService.changePassword(username, request.getCurrentPassword(), request.getNewPassword());
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException exception) {
+            throw new BadCredentialsException("credentials.invalid");
+        }
+    }
+
+    @Getter
+    @Setter
+    private static final class ChangePasswordRequest {
+        private String currentPassword;
+        private String newPassword;
     }
 }

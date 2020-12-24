@@ -4,7 +4,6 @@ import at.downdrown.housekeeper.TestBase;
 import at.downdrown.housekeeper.api.dto.AvatarDTO;
 import at.downdrown.housekeeper.api.service.AvatarService;
 import at.downdrown.housekeeper.be.model.User;
-import at.downdrown.housekeeper.be.repository.AvatarRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -35,8 +34,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author Manfred Huber
  */
 @SpringBootTest
-@AutoConfigureTestDatabase
 @AutoConfigureMockMvc
+@AutoConfigureTestDatabase
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @WithUserDetails("admin")
 public class AvatarControllerTest extends TestBase {
@@ -45,7 +44,7 @@ public class AvatarControllerTest extends TestBase {
     private @Autowired AvatarService avatarService;
 
     @Test
-    @Sql(TestBase.CREATE_USERS_SQL)
+    @Sql(CREATE_USERS_SQL)
     public void shouldSetAvatarForUser() throws Exception {
         mockMvc.perform(multipart("/avatar/admin")
             .file(new MockMultipartFile("file", "myimage.png", "image/png", "content".getBytes())))
@@ -58,7 +57,7 @@ public class AvatarControllerTest extends TestBase {
     }
 
     @Test
-    @Sql(TestBase.CREATE_USERS_SQL)
+    @Sql(CREATE_USERS_SQL)
     public void shouldSetAvatarForUser_FailByWrongFileType() throws Exception {
         mockMvc.perform(multipart("/avatar/admin")
             .file(new MockMultipartFile("file", "somedocument.pdf", "application/pdf", "content".getBytes())))
@@ -66,6 +65,7 @@ public class AvatarControllerTest extends TestBase {
     }
 
     @Test
+    @Sql(CREATE_USERS_SQL)
     public void shouldSetAvatarForUser_FailByNonExistentUser() throws Exception {
         mockMvc.perform(multipart("/avatar/some-random-dude")
             .file(new MockMultipartFile("file", "myimage.png", "image/png", "content".getBytes())))
@@ -73,8 +73,8 @@ public class AvatarControllerTest extends TestBase {
     }
 
     @Test
-    @Sql(TestBase.CREATE_USERS_SQL)
-    @Sql(TestBase.CREATE_AVATARS_SQL)
+    @Sql(CREATE_USERS_SQL)
+    @Sql(CREATE_AVATARS_SQL)
     public void shouldGetAvatarForUser() throws Exception {
         mockMvc.perform(get("/avatar/admin"))
             .andExpect(status().isOk())
@@ -84,22 +84,22 @@ public class AvatarControllerTest extends TestBase {
     }
 
     @Test
-    @Sql(TestBase.CREATE_USERS_SQL)
+    @Sql(CREATE_USERS_SQL)
     public void shouldGetAvatarForUser_FailByNonExistentAvatar() throws Exception {
         mockMvc.perform(get("/avatar/admin"))
             .andExpect(status().isNotFound());
     }
 
     @Test
-    @Sql(TestBase.CREATE_USERS_SQL)
-    @Sql(TestBase.CREATE_AVATARS_SQL)
+    @Sql(CREATE_USERS_SQL)
+    @Sql(CREATE_AVATARS_SQL)
     public void shouldDeleteAvatarForUser() throws Exception {
         mockMvc.perform(delete("/avatar/admin"))
             .andExpect(status().isOk());
     }
 
     @Test
-    @Sql(TestBase.CREATE_USERS_SQL)
+    @Sql(CREATE_USERS_SQL)
     public void shouldDeleteAvatarForUser_WithNonExistentAvatar() throws Exception {
         mockMvc.perform(delete("/avatar/admin"))
             .andExpect(status().isOk());

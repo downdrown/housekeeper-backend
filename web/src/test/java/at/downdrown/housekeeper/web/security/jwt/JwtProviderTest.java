@@ -1,13 +1,14 @@
 package at.downdrown.housekeeper.web.security.jwt;
 
+import at.downdrown.housekeeper.TestBase;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Set;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.jdbc.Sql;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -20,14 +21,19 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * @author Manfred Huber
  */
 @SpringBootTest
-public class JwtProviderTest {
+@AutoConfigureTestDatabase
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+public class JwtProviderTest extends TestBase {
 
     private @Autowired JwtProvider jwtProvider;
+    private @Autowired UserDetailsService userDetailsService;
 
     @Test
+    @Sql(CREATE_USERS_SQL)
     public void shouldIssueToken() {
 
-        JwtToken issuedToken = jwtProvider.issue(mockUserDetails());
+        UserDetails user = userDetailsService.loadUserByUsername("user");
+        JwtToken issuedToken = jwtProvider.issue(user);
 
         assertNotNull(issuedToken, "Should return an issued token");
         assertNotNull(issuedToken.getAccessToken(), "Should have an access_token set");
@@ -36,9 +42,11 @@ public class JwtProviderTest {
     }
 
     @Test
+    @Sql(CREATE_USERS_SQL)
     public void shouldVerifyToken() {
 
-        JwtToken issuedToken = jwtProvider.issue(mockUserDetails());
+        UserDetails user = userDetailsService.loadUserByUsername("user");
+        JwtToken issuedToken = jwtProvider.issue(user);
         UserDetails verified = jwtProvider.verify(issuedToken.getAccessToken());
 
         assertNotNull(verified, "Should verify an issued token");
@@ -49,23 +57,17 @@ public class JwtProviderTest {
     }
 
     @Test
+    @Sql(CREATE_USERS_SQL)
     public void shouldRefreshToken() {
 
         // Issue a new token
-        JwtToken issuedToken = jwtProvider.issue(mockUserDetails());
+        UserDetails user = userDetailsService.loadUserByUsername("user");
+        JwtToken issuedToken = jwtProvider.issue(user);
 
         // Refresh the access_token
         String refreshedAccessToken = jwtProvider.refresh(issuedToken.getRefreshToken());
 
         assertNotNull(refreshedAccessToken, "Should create a new access token");
         assertNotEquals("", refreshedAccessToken, "Should create a non-empty access token");
-    }
-
-    /** Generates a mocked {@link UserDetails} object. */
-    private static UserDetails mockUserDetails() {
-        return new User(
-            "user",
-            "my-mock-password",
-            Set.of(new SimpleGrantedAuthority("auth.1"), new SimpleGrantedAuthority("auth.2")));
     }
 }

@@ -3,8 +3,10 @@ package at.downdrown.housekeeper.web.config;
 import at.downdrown.housekeeper.api.Role;
 import at.downdrown.housekeeper.api.service.GrantedAuthorityService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -64,5 +66,12 @@ public class WebSecurityConfigurationDev extends WebSecurityConfigurerAdapter {
             .withUser(new User("admin", passwordEncoder.encode("password"), grantedAuthorityService.calculateAuthoritiesForRole(Role.ADMIN)))
             .withUser(new User("user", passwordEncoder.encode("password"), grantedAuthorityService.calculateAuthoritiesForRole(Role.USER)))
             .withUser(new User("guest", passwordEncoder.encode("password"), grantedAuthorityService.calculateAuthoritiesForRole(Role.GUEST)));
+    }
+
+    /** Exposes the {@link AuthenticationManager} as Spring bean. */
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 }

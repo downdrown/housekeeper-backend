@@ -1,6 +1,7 @@
 package at.downdrown.housekeeper.be;
 
 import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Import;
 
 /**
@@ -10,6 +11,7 @@ import org.springframework.context.annotation.Import;
  *
  * @author Manfred Huber
  */
+@EnableAutoConfiguration
 @SpringBootConfiguration
 @Import({BackendConfiguration.class})
 public class TestBackendConfiguration {

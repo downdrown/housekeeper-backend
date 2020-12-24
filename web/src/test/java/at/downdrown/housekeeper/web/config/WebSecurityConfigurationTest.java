@@ -1,10 +1,9 @@
 package at.downdrown.housekeeper.web.config;
 
-import at.downdrown.housekeeper.be.mock.MockUserDetailsService;
 import at.downdrown.housekeeper.web.security.jwt.TokenEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,6 +11,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.firewall.HttpFirewall;
 
@@ -24,21 +24,21 @@ import org.springframework.security.web.firewall.HttpFirewall;
  *
  * @author Manfred Huber
  */
-@TestConfiguration
+@Profile("test")
 @EnableWebSecurity
 public class WebSecurityConfigurationTest extends WebSecurityConfigurerAdapter {
 
     private final HttpFirewall httpFirewall;
     private final PasswordEncoder passwordEncoder;
-    private final MockUserDetailsService mockUserDetailsService;
+    private final UserDetailsService userDetailsService;
 
     @Autowired
     public WebSecurityConfigurationTest(final HttpFirewall httpFirewall,
                                         final PasswordEncoder passwordEncoder,
-                                        final MockUserDetailsService mockUserDetailsService) {
+                                        final UserDetailsService userDetailsService) {
         this.httpFirewall = httpFirewall;
         this.passwordEncoder = passwordEncoder;
-        this.mockUserDetailsService = mockUserDetailsService;
+        this.userDetailsService = userDetailsService;
     }
 
     @Override
@@ -67,13 +67,11 @@ public class WebSecurityConfigurationTest extends WebSecurityConfigurerAdapter {
     @Autowired
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth
-            .userDetailsService(mockUserDetailsService)
+            .userDetailsService(userDetailsService)
             .passwordEncoder(passwordEncoder);
     }
 
-    /**
-     * Exposes the {@link AuthenticationManager} as Spring bean.
-     */
+    /** Exposes the {@link AuthenticationManager} as Spring bean. */
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {

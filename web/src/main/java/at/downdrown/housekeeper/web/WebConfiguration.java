@@ -1,6 +1,6 @@
-package at.downdrown.housekeeper.web.config;
+package at.downdrown.housekeeper.web;
 
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import at.downdrown.housekeeper.web.config.EncodingConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -14,13 +14,10 @@ import org.springframework.security.web.firewall.StrictHttpFirewall;
  * @author Manfred Huber
  */
 @Configuration
-@EnableAutoConfiguration
-@ComponentScan(basePackages = "at.downdrown.housekeeper.web")
 @Import({
-    EncodingConfig.class,
-    WebSecurityConfigurationDev.class,
-    WebSecurityConfigurationProd.class
+    EncodingConfig.class
 })
+@ComponentScan(basePackages = "at.downdrown.housekeeper.web")
 public class WebConfiguration {
 
     @Bean

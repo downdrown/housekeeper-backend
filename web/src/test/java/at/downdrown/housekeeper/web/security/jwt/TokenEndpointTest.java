@@ -1,11 +1,6 @@
 package at.downdrown.housekeeper.web.security.jwt;
 
 import at.downdrown.housekeeper.TestBase;
-import at.downdrown.housekeeper.api.Role;
-import at.downdrown.housekeeper.api.dto.UserDTO;
-import at.downdrown.housekeeper.be.model.User;
-import at.downdrown.housekeeper.web.rest.UserController;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,18 +8,15 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultHandler;
 
 import java.nio.charset.StandardCharsets;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -43,7 +35,6 @@ public class TokenEndpointTest extends TestBase {
 
     @Test
     @Sql(CREATE_USERS_SQL)
-    @Sql(CREATE_CREDENTIALS_SQL)
     public void shouldAuthenticate() throws Exception {
 
         String authRequest = "{\"username\":\"admin\", \"password\":\"password\"}";
@@ -62,7 +53,6 @@ public class TokenEndpointTest extends TestBase {
 
     @Test
     @Sql(CREATE_USERS_SQL)
-    @Sql(CREATE_CREDENTIALS_SQL)
     public void shouldAuthenticateAndFail() throws Exception {
 
         String authRequest = "{\"username\":\"admin\", \"password\":\"a-wrong-password\"}";
@@ -76,7 +66,6 @@ public class TokenEndpointTest extends TestBase {
 
     @Test
     @Sql(CREATE_USERS_SQL)
-    @Sql(CREATE_CREDENTIALS_SQL)
     public void shouldRefreshToken() throws Exception {
 
         String authRequest = "{\"username\":\"admin\", \"password\":\"password\"}";

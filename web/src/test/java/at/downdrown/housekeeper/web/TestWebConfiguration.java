@@ -1,6 +1,9 @@
-package at.downdrown.housekeeper.web.config;
+package at.downdrown.housekeeper.web;
 
+import at.downdrown.housekeeper.be.TestBackendConfiguration;
+import at.downdrown.housekeeper.web.config.WebSecurityConfigurationTest;
 import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Import;
 
 /**
@@ -11,7 +14,12 @@ import org.springframework.context.annotation.Import;
  * @author Manfred Huber
  */
 @SpringBootConfiguration
-@Import({WebConfiguration.class, WebSecurityConfigurationTest.class})
+@EnableAutoConfiguration
+@Import({
+    TestBackendConfiguration.class,
+    WebConfiguration.class,
+    WebSecurityConfigurationTest.class
+})
 public class TestWebConfiguration {
     // extend the configuration of the web module for unit testing if necessary
 }

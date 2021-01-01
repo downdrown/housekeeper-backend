@@ -40,17 +40,14 @@ public class JwtProviderImpl implements JwtProvider {
 
     private final UserDetailsService userDetailsService;
     private final JwtConfiguration jwtConfiguration;
-    private final Clock clock;
     private final Algorithm tokenAlgorithm;
     private final Algorithm refreshTokenAlgorithm;
 
     @Autowired
     public JwtProviderImpl(final UserDetailsService userDetailsService,
-                           final JwtConfiguration jwtConfiguration,
-                           final Clock clock) {
+                           final JwtConfiguration jwtConfiguration) {
         this.userDetailsService = userDetailsService;
         this.jwtConfiguration = jwtConfiguration;
-        this.clock = clock;
 
         // set up used algoritms
         this.tokenAlgorithm = Algorithm.HMAC512(jwtConfiguration.getTokenSigningKey());
@@ -60,7 +57,7 @@ public class JwtProviderImpl implements JwtProvider {
     @Override
     public JwtToken issue(UserDetails userDetails) {
 
-        final ZonedDateTime issuedAt = ZonedDateTime.now(clock);
+        final ZonedDateTime issuedAt = ZonedDateTime.now();
 
         final String accessToken = issueAccessToken(
             issuedAt,
@@ -80,49 +77,51 @@ public class JwtProviderImpl implements JwtProvider {
 
     @Override
     public UserDetails verify(String accessToken) throws BadCredentialsException, CredentialsExpiredException {
-        try {
-            // Try to decode the given access token
-            final DecodedJWT decodedToken = JWT.require(tokenAlgorithm).build().verify(accessToken);
 
-            // Invalidate the token if it has been issued before the application start
-            throwIf(tokenWasIssuedBeforeApplicationStart(decodedToken), () -> new CredentialsExpiredException("credentials.expired"));
+        // Try to decode the given access token
+        final DecodedJWT decodedToken = decode(tokenAlgorithm, accessToken);
 
-            final String username = decodedToken.getSubject();
-            final String[] permissions = decodedToken.getClaim(PERMISSIONS_CLAIM).asArray(String.class);
+        // Invalidate the token if it has been issued before the application start
+        throwIf(tokenWasIssuedBeforeApplicationStart(decodedToken), () -> new CredentialsExpiredException("credentials.expired"));
 
-            return new User(username, accessToken, AuthorityUtils.createAuthorityList(permissions == null ? new String[]{} : permissions));
+        final String username = decodedToken.getSubject();
+        final String[] permissions = decodedToken.getClaim(PERMISSIONS_CLAIM).asArray(String.class);
 
-        } catch (AlgorithmMismatchException | SignatureVerificationException | InvalidClaimException e) {
-            throw new BadCredentialsException("credentials.invalid");
-        } catch (TokenExpiredException e) {
-            throw new CredentialsExpiredException("credentials.expired");
-        }
+        return new User(username, accessToken, AuthorityUtils.createAuthorityList(permissions == null ? new String[]{} : permissions));
     }
 
     @Override
     public String refresh(String refreshToken) throws BadCredentialsException, CredentialsExpiredException {
-        try {
 
-            // Try to decode the given access token
-            final DecodedJWT decodedToken = JWT.require(refreshTokenAlgorithm).build().verify(refreshToken);
+        // Try to decode the given access token
+        final DecodedJWT decodedToken = decode(refreshTokenAlgorithm, refreshToken);
 
-            // Invalidate the token if it has been issued before the application start
-            throwIf(tokenWasIssuedBeforeApplicationStart(decodedToken), () -> new CredentialsExpiredException("credentials.expired"));
+        // Invalidate the token if it has been issued before the application start
+        throwIf(tokenWasIssuedBeforeApplicationStart(decodedToken), () -> new CredentialsExpiredException("credentials.expired"));
 
-            // Reload the UserDetails
-            final UserDetails userDetails = userDetailsService.loadUserByUsername(decodedToken.getSubject());
+        // Reload the UserDetails
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(decodedToken.getSubject());
 
-            // Issue a new token
-            return issueAccessToken(
-                ZonedDateTime.now(clock),
-                userDetails.getUsername(),
-                userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toArray(String[]::new));
+        // Issue a new token
+        return issueAccessToken(
+            ZonedDateTime.now(),
+            userDetails.getUsername(),
+            userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toArray(String[]::new));
+    }
 
-        } catch (AlgorithmMismatchException | SignatureVerificationException | InvalidClaimException e) {
-            throw new BadCredentialsException("credentials.invalid");
-        } catch (TokenExpiredException e) {
-            throw new CredentialsExpiredException("credentials.expired");
-        }
+    @Override
+    public String getHeader(String accessToken) throws BadCredentialsException, CredentialsExpiredException {
+        return decode(tokenAlgorithm, accessToken).getHeader();
+    }
+
+    @Override
+    public String getPayload(String accessToken) throws BadCredentialsException, CredentialsExpiredException {
+        return decode(tokenAlgorithm, accessToken).getPayload();
+    }
+
+    @Override
+    public String getSignature(String accessToken) throws BadCredentialsException, CredentialsExpiredException {
+        return decode(tokenAlgorithm, accessToken).getSignature();
     }
 
     private String issueAccessToken(ZonedDateTime issuedAt, String subject, String[] permissions) {
@@ -147,7 +146,18 @@ public class JwtProviderImpl implements JwtProvider {
     }
 
     private boolean tokenWasIssuedBeforeApplicationStart(DecodedJWT decodedToken) {
-        final ZonedDateTime applicationStart = ZonedDateTime.now(clock).minus(runtimeMXBean.getUptime(), ChronoUnit.MILLIS);
+        final ZonedDateTime applicationStart = ZonedDateTime.now().minus(runtimeMXBean.getUptime(), ChronoUnit.MILLIS);
         return decodedToken.getIssuedAt().before(Date.from(applicationStart.toInstant()));
+    }
+
+    /** Decodes the given {@code token} using the passed {@code algorithm} */
+    private static DecodedJWT decode(Algorithm algorithm, String token) throws BadCredentialsException, CredentialsExpiredException {
+        try {
+            return JWT.require(algorithm).build().verify(token);
+        } catch (AlgorithmMismatchException | SignatureVerificationException | InvalidClaimException e) {
+            throw new BadCredentialsException("credentials.invalid");
+        } catch (TokenExpiredException e) {
+            throw new CredentialsExpiredException("credentials.expired");
+        }
     }
 }

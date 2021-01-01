@@ -43,4 +43,34 @@ public interface JwtProvider {
      */
     UserDetails verify(String accessToken) throws BadCredentialsException, CredentialsExpiredException;
 
+    /**
+     * Extracts the header from the given access token.
+     *
+     * @param accessToken the token whose header should be extracted.
+     * @return the extracted header.
+     * @throws BadCredentialsException if the algorithm doesn't match, the signature couldn't be verified or invalid claims have been transmitted.
+     * @throws CredentialsExpiredException if the token is expired.
+     */
+    String getHeader(String accessToken) throws BadCredentialsException, CredentialsExpiredException;
+
+    /**
+     * Extracts the payload from the given access token.
+     *
+     * @param accessToken the token whose payload should be extracted.
+     * @return the extracted payload.
+     * @throws BadCredentialsException if the algorithm doesn't match, the signature couldn't be verified or invalid claims have been transmitted.
+     * @throws CredentialsExpiredException if the token is expired.
+     */
+    String getPayload(String accessToken) throws BadCredentialsException, CredentialsExpiredException;
+
+    /**
+     * Extracts the signature from the given access token.
+     *
+     * @param accessToken the token whose signature should be extracted.
+     * @return the extracted signature.
+     * @throws BadCredentialsException if the algorithm doesn't match, the signature couldn't be verified or invalid claims have been transmitted.
+     * @throws CredentialsExpiredException if the token is expired.
+     */
+    String getSignature(String accessToken) throws BadCredentialsException, CredentialsExpiredException;
+
 }

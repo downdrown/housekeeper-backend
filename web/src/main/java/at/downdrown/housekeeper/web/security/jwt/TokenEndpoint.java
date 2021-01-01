@@ -13,6 +13,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.WebUtils;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Rest endpoint that let's users authenticate and obtain an valid JWT.
@@ -29,28 +34,60 @@ public class TokenEndpoint {
 
     public static final String URL_PATTERN = "/auth/token/**";
 
-    private final JwtProvider jwtProvider;
-    private final AuthenticationManager authenticationManager;
+    private static final String SESSION_COOKIE = "SESSIONID";
+    private static final String USERDATA_COOKIE = "USERDATA";
 
-    public TokenEndpoint(final JwtProvider jwtProvider,
-                         final AuthenticationManager authenticationManager) {
-        this.jwtProvider = jwtProvider;
+    private final AuthenticationManager authenticationManager;
+    private final JwtProvider jwtProvider;
+
+    public TokenEndpoint(final AuthenticationManager authenticationManager,
+                         final JwtProvider jwtProvider) {
         this.authenticationManager = authenticationManager;
+        this.jwtProvider = jwtProvider;
     }
 
     @PostMapping(value = "authenticate", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<JwtToken> authenticate(@RequestBody final AuthenticationRequest authenticationRequest) {
+    public void authenticate(@RequestBody AuthenticationRequest authenticationRequest, HttpServletResponse response) {
 
         final Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
 
         final UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        final JwtToken issuedToken = jwtProvider.issue(userDetails);
+        final String issuedTokenJsonEncoded = JwtEncodingUtils.encode(issuedToken);
 
-        return ResponseEntity.ok(jwtProvider.issue(userDetails));
+        Cookie sessionCookie = new Cookie(SESSION_COOKIE, issuedTokenJsonEncoded);
+        sessionCookie.setPath("/");
+        sessionCookie.setHttpOnly(true);
+
+        Cookie userdataCookie = new Cookie(USERDATA_COOKIE, jwtProvider.getPayload(issuedToken.getAccessToken()));
+        userdataCookie.setPath("/");
+
+        response.addCookie(sessionCookie);
+        response.addCookie(userdataCookie);
+    }
+
+    @PostMapping(value = "logout")
+    public void logout(final HttpServletRequest request, final HttpServletResponse response) {
+        request.getSession().invalidate();
+        if (WebUtils.getCookie(request, SESSION_COOKIE) != null) {
+            Cookie sessionCookie = new Cookie(SESSION_COOKIE, null);
+            sessionCookie.setPath("/");
+            sessionCookie.setHttpOnly(true);
+            sessionCookie.setMaxAge(0);
+            response.addCookie(sessionCookie);
+        }
+        if (WebUtils.getCookie(request, USERDATA_COOKIE) != null) {
+            Cookie userdataCookie = new Cookie(USERDATA_COOKIE, null);
+            userdataCookie.setPath("/");
+            userdataCookie.setMaxAge(0);
+            response.addCookie(userdataCookie);
+        }
     }
 
     @GetMapping(value = "refresh/{refreshToken}", produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> refreshToken(@PathVariable("refreshToken") final String refreshToken) {
+        // FIXME refresh mechanism needs to be re-done
         return ResponseEntity.ok(jwtProvider.refresh(refreshToken));
     }
 

@@ -11,15 +11,19 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.util.WebUtils;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Set;
 
 /**
  * {@link Filter} that extracts and verifies a JWT from each request it processes and
@@ -31,8 +35,9 @@ import java.io.IOException;
 @Component
 public class JwtTokenFilter extends OncePerRequestFilter {
 
-    private static final String AUTHORIZATION_HEADER = "Authorization";
-    private static final String TOKEN_AUTH_PREFIX = "Bearer";
+    private static final Set<String> excludedEndpoints = Set.of(TokenEndpoint.URL_PATTERN);
+    private static final String SESSION_COOKIE = "SESSIONID";
+    private static final String USERDATA_COOKIE = "USERDATA";
 
     private final JwtProvider jwtProvider;
 
@@ -52,12 +57,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         if (securityContext.getAuthentication() == null) {
 
             // Extract the bearer token from the request header
-            final String token = extractToken(request);
+            final JwtToken token = extractToken(request);
 
             if (token != null) {
                 try {
 
-                    final UserDetails userDetails = jwtProvider.verify(token);
+                    final UserDetails userDetails = jwtProvider.verify(token.getAccessToken());
                     final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
@@ -74,14 +79,19 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private static String extractToken(final HttpServletRequest request) {
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        return excludedEndpoints.stream().anyMatch(e -> new AntPathMatcher().match(e, request.getServletPath()));
+    }
 
-        final String authorizationHeader = request.getHeader(AUTHORIZATION_HEADER);
+    private static JwtToken extractToken(final HttpServletRequest request) {
 
-        if (StringUtils.hasLength(authorizationHeader) && authorizationHeader.startsWith(TOKEN_AUTH_PREFIX)) {
-            return authorizationHeader.replace(TOKEN_AUTH_PREFIX, "").trim();
+        final Cookie sessionIdCookie = WebUtils.getCookie(request, SESSION_COOKIE);
+
+        if (sessionIdCookie != null) {
+            return JwtEncodingUtils.decode(sessionIdCookie.getValue());
+        } else {
+            return null;
         }
-
-        return null;
     }
 }

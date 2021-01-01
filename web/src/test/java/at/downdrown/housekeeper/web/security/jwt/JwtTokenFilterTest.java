@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.User;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -50,10 +51,22 @@ public class JwtTokenFilterTest {
     @Test
     void shouldFilterAndSucceed() throws ServletException, IOException {
 
-        when(mockHttpServletRequest.getHeader(eq("Authorization")))
-            .thenReturn("Bearer my.bearer.token");
+        JwtToken originalToken = new JwtToken("my-access-token", "my-refresh-token", 1);
+        String encodedToken = JwtEncodingUtils.encode(originalToken);
 
-        when(mockJwtProvider.verify(eq("my.bearer.token")))
+        Cookie sessionCookie = new Cookie("SESSIONID", encodedToken);
+        sessionCookie.setPath("/");
+        sessionCookie.setHttpOnly(true);
+
+        Cookie userdataCookie = new Cookie("USERDATA", "my-userdata");
+        userdataCookie.setPath("/");
+
+        Cookie[] cookies = new Cookie[] { sessionCookie, userdataCookie };
+
+        when(mockHttpServletRequest.getCookies())
+            .thenReturn(cookies);
+
+        when(mockJwtProvider.verify(eq("my-access-token")))
             .thenReturn(new User("user", "password", Collections.emptySet()));
 
         jwtTokenFilter.doFilter(mockHttpServletRequest, mockHttpServletResponse, mockFilterChain);
@@ -82,10 +95,22 @@ public class JwtTokenFilterTest {
     @Test
     void shouldFilterAndFailByAuthenticationException() {
 
-        when(mockHttpServletRequest.getHeader(eq("Authorization")))
-            .thenReturn("Bearer my.bearer.token");
+        JwtToken originalToken = new JwtToken("my-access-token", "my-refresh-token", 1);
+        String encodedToken = JwtEncodingUtils.encode(originalToken);
 
-        when(mockJwtProvider.verify(eq("my.bearer.token")))
+        Cookie sessionCookie = new Cookie("SESSIONID", encodedToken);
+        sessionCookie.setPath("/");
+        sessionCookie.setHttpOnly(true);
+
+        Cookie userdataCookie = new Cookie("USERDATA", "my-userdata");
+        userdataCookie.setPath("/");
+
+        Cookie[] cookies = new Cookie[] { sessionCookie, userdataCookie };
+
+        when(mockHttpServletRequest.getCookies())
+            .thenReturn(cookies);
+
+        when(mockJwtProvider.verify(eq("my-access-token")))
             .thenThrow(CredentialsExpiredException.class);
 
         assertThrows(AccessDeniedException.class, () -> jwtTokenFilter.doFilter(mockHttpServletRequest, mockHttpServletResponse, mockFilterChain));

@@ -2,6 +2,7 @@ package at.downdrown.housekeeper.web.config;
 
 import at.downdrown.housekeeper.api.Role;
 import at.downdrown.housekeeper.api.service.GrantedAuthorityService;
+import at.downdrown.housekeeper.web.security.jwt.JwtTokenFilter;
 import at.downdrown.housekeeper.web.security.jwt.TokenEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -22,7 +23,6 @@ import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
 import java.util.List;
 
@@ -40,15 +40,17 @@ public class WebSecurityConfigurationDev extends WebSecurityConfigurerAdapter {
     private final GrantedAuthorityService grantedAuthorityService;
     private final HttpFirewall httpFirewall;
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenFilter jwtTokenFilter;
 
     @Autowired
-    public WebSecurityConfigurationDev(
-        final GrantedAuthorityService grantedAuthorityService,
+    public WebSecurityConfigurationDev(final GrantedAuthorityService grantedAuthorityService,
         final HttpFirewall httpFirewall,
-        final PasswordEncoder passwordEncoder) {
+        final PasswordEncoder passwordEncoder,
+        final JwtTokenFilter jwtTokenFilter) {
         this.grantedAuthorityService = grantedAuthorityService;
         this.httpFirewall = httpFirewall;
         this.passwordEncoder = passwordEncoder;
+        this.jwtTokenFilter = jwtTokenFilter;
     }
 
     @Override
@@ -68,8 +70,7 @@ public class WebSecurityConfigurationDev extends WebSecurityConfigurerAdapter {
             .anyRequest()
             .fullyAuthenticated()
         .and()
-            .httpBasic()
-        .and()
+            .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
             .csrf().disable()
             .cors().configurationSource(corsConfigurationSource())
         .and()

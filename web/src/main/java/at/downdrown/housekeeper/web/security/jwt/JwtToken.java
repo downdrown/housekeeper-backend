@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**
@@ -15,20 +16,24 @@ import org.springframework.security.core.userdetails.UserDetails;
  * @author Manfred Huber
  */
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 @Getter
 public class JwtToken {
 
     /** The generated JWT token. */
     @JsonProperty("access_token")
-    private final String accessToken;
+    @Builder.Default
+    private final String accessToken = null;
 
     /** The refreh token used to refresh a claimed token. */
     @JsonProperty("refresh_token")
-    private final String refreshToken;
+    @Builder.Default
+    private final String refreshToken = null;
 
     /** The time in seconds after that the token expires. */
     @JsonProperty("expires_in")
-    private final Integer expiresIn;
+    @Builder.Default
+    private final Integer expiresIn = 0;
 
 }

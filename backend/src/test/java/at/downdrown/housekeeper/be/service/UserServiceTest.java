@@ -1,10 +1,12 @@
 package at.downdrown.housekeeper.be.service;
 
 import at.downdrown.housekeeper.TestBase;
+import at.downdrown.housekeeper.api.Gender;
 import at.downdrown.housekeeper.api.Role;
 import at.downdrown.housekeeper.api.dto.UserDTO;
 import at.downdrown.housekeeper.api.service.UserService;
 import at.downdrown.housekeeper.be.model.Credential;
+import at.downdrown.housekeeper.be.model.User;
 import at.downdrown.housekeeper.be.repository.CredentialRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,12 +41,13 @@ public class UserServiceTest extends TestBase {
         user.setUsername("maxi");
         user.setFirstName("Max");
         user.setLastName("Mustermann");
+        user.setGender(Gender.MALE);
         user.setRole(Role.USER);
         user.setRegistrationPassword("a-password");
 
         assertThat(userService.register(user)).isNotNull()
-            .extracting(UserDTO::getId, UserDTO::getUsername, UserDTO::getFirstName, UserDTO::getLastName, UserDTO::getRole)
-            .containsExactly(1000L, "maxi", "Max", "Mustermann", Role.USER);
+            .extracting(UserDTO::getId, UserDTO::getUsername, UserDTO::getFirstName, UserDTO::getLastName, UserDTO::getGender, UserDTO::getRole)
+            .containsExactly(1000L, "maxi", "Max", "Mustermann", Gender.MALE, Role.USER);
 
         Credential credential = credentialRepository.findByUsername("maxi");
         assertThat(credential).isNotNull();
@@ -56,8 +59,8 @@ public class UserServiceTest extends TestBase {
     public void shouldFindUserByUsername() {
         assertThat(userService.findByUsername("admin"))
             .isNotNull()
-            .extracting(UserDTO::getId, UserDTO::getUsername, UserDTO::getFirstName, UserDTO::getLastName, UserDTO::getRole)
-            .containsExactly(10L, "admin", "Admin", "Admin", Role.ADMIN);
+            .extracting(UserDTO::getId, UserDTO::getUsername, UserDTO::getFirstName, UserDTO::getLastName, UserDTO::getGender, UserDTO::getRole)
+            .containsExactly(10L, "admin", "Admin", "Admin", Gender.FEMALE, Role.ADMIN);
     }
 
     @Test
@@ -83,17 +86,20 @@ public class UserServiceTest extends TestBase {
                 UserDTO::getUsername,
                 UserDTO::getFirstName,
                 UserDTO::getLastName,
+                UserDTO::getGender,
                 UserDTO::getRole,
                 UserDTO::getLastLogin)
             .containsExactly(
                 "admin",
                 "Admin",
                 "Admin",
+                Gender.FEMALE,
                 Role.ADMIN,
                 null);
 
         user.setFirstName("a-new-firstname");
         user.setLastName("a-new-lastname");
+        user.setGender(Gender.MALE);
         user.setRole(Role.GUEST);
         user.setLastLogin(ZonedDateTime.now());
 
@@ -102,12 +108,14 @@ public class UserServiceTest extends TestBase {
                 UserDTO::getUsername,
                 UserDTO::getFirstName,
                 UserDTO::getLastName,
+                UserDTO::getGender,
                 UserDTO::getRole,
                 UserDTO::getLastLogin)
             .containsExactly(
                 "admin",
                 "a-new-firstname",
                 "a-new-lastname",
+                Gender.MALE,
                 Role.GUEST,
                 null);
     }

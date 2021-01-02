@@ -1,6 +1,7 @@
 package at.downdrown.housekeeper.web.rest;
 
 import at.downdrown.housekeeper.TestBase;
+import at.downdrown.housekeeper.api.Gender;
 import at.downdrown.housekeeper.api.Permission;
 import at.downdrown.housekeeper.api.Role;
 import at.downdrown.housekeeper.api.dto.UserDTO;
@@ -51,6 +52,7 @@ public class UserControllerTest extends TestBase {
         user.setUsername("maxi");
         user.setFirstName("Max");
         user.setLastName("Mustermann");
+        user.setGender(Gender.MALE);
         user.setRole(Role.GUEST);
         user.setRegistrationPassword("a-password");
 
@@ -64,6 +66,7 @@ public class UserControllerTest extends TestBase {
             .andExpect(jsonPath("$.username").value("maxi"))
             .andExpect(jsonPath("$.firstName").value("Max"))
             .andExpect(jsonPath("$.lastName").value("Mustermann"))
+            .andExpect(jsonPath("$.gender").value("MALE"))
             .andExpect(jsonPath("$.role").value("GUEST"))
             .andExpect(jsonPath("$.registrationPassword").doesNotExist());
     }
@@ -78,6 +81,7 @@ public class UserControllerTest extends TestBase {
             .andExpect(jsonPath("$.username").value("admin"))
             .andExpect(jsonPath("$.firstName").value("Admin"))
             .andExpect(jsonPath("$.lastName").value("Admin"))
+            .andExpect(jsonPath("$.gender").value("FEMALE"))
             .andExpect(jsonPath("$.role").value("ADMIN"))
             .andExpect(jsonPath("$.registrationPassword").doesNotExist());
     }
@@ -100,18 +104,21 @@ public class UserControllerTest extends TestBase {
             .andExpect(jsonPath("$[0].username").value("admin"))
             .andExpect(jsonPath("$[0].firstName").value("Admin"))
             .andExpect(jsonPath("$[0].lastName").value("Admin"))
+            .andExpect(jsonPath("$[0].gender").value("FEMALE"))
             .andExpect(jsonPath("$[0].role").value("ADMIN"))
             .andExpect(jsonPath("$.registrationPassword").doesNotExist())
 
             .andExpect(jsonPath("$[1].username").value("guest"))
             .andExpect(jsonPath("$[1].firstName").value("Guest"))
             .andExpect(jsonPath("$[1].lastName").value("Guest"))
+            .andExpect(jsonPath("$[1].gender").value("MALE"))
             .andExpect(jsonPath("$[1].role").value("GUEST"))
             .andExpect(jsonPath("$.registrationPassword").doesNotExist())
 
             .andExpect(jsonPath("$[2].username").value("user"))
             .andExpect(jsonPath("$[2].firstName").value("User"))
             .andExpect(jsonPath("$[2].lastName").value("User"))
+            .andExpect(jsonPath("$[2].gender").value("MALE"))
             .andExpect(jsonPath("$[2].role").value("USER"))
             .andExpect(jsonPath("$.registrationPassword").doesNotExist());
     }
@@ -135,6 +142,7 @@ public class UserControllerTest extends TestBase {
         user.setUsername("admin");
         user.setFirstName("Firstname");
         user.setLastName("Lastname");
+        user.setGender(Gender.MALE);
         user.setRole(Role.USER);
 
         mockMvc.perform(put("/user")
@@ -147,6 +155,7 @@ public class UserControllerTest extends TestBase {
             .andExpect(jsonPath("$.username").value("admin"))
             .andExpect(jsonPath("$.firstName").value("Firstname"))
             .andExpect(jsonPath("$.lastName").value("Lastname"))
+            .andExpect(jsonPath("$.gender").value("MALE"))
             .andExpect(jsonPath("$.role").value("USER"));
     }
 

@@ -1,6 +1,7 @@
 package at.downdrown.housekeeper.be.repository;
 
 import at.downdrown.housekeeper.TestBase;
+import at.downdrown.housekeeper.api.Gender;
 import at.downdrown.housekeeper.api.Role;
 import at.downdrown.housekeeper.be.model.Credential;
 import at.downdrown.housekeeper.be.model.User;
@@ -32,6 +33,7 @@ public class CredentialRepositoryTest extends TestBase {
         user.setUsername("max");
         user.setFirstName("Max");
         user.setLastName("Mustermann");
+        user.setGender(Gender.MALE);
         user.setRole(Role.GUEST);
 
         userRepository.save(user);

@@ -1,6 +1,7 @@
 package at.downdrown.housekeeper.be.repository;
 
 import at.downdrown.housekeeper.TestBase;
+import at.downdrown.housekeeper.api.Gender;
 import at.downdrown.housekeeper.api.Role;
 import at.downdrown.housekeeper.be.model.User;
 import org.junit.jupiter.api.Test;
@@ -37,6 +38,7 @@ public class UserRepositoryTest extends TestBase {
         user.setUsername("max");
         user.setFirstName("Maximilian");
         user.setLastName("Mustermann");
+        user.setGender(Gender.MALE);
         user.setRole(Role.USER);
         user.setLastLogin(lastLogin);
 
@@ -52,12 +54,14 @@ public class UserRepositoryTest extends TestBase {
                 User::getUsername,
                 User::getFirstName,
                 User::getLastName,
+                User::getGender,
                 User::getRole,
                 User::getLastLogin)
             .containsExactly(
                 "max",
                 "Maximilian",
                 "Mustermann",
+                Gender.MALE,
                 Role.USER,
                 lastLogin);
     }

@@ -1,5 +1,6 @@
 package at.downdrown.housekeeper.be.mapper;
 
+import at.downdrown.housekeeper.api.Gender;
 import at.downdrown.housekeeper.api.Role;
 import at.downdrown.housekeeper.api.dto.UserDTO;
 import at.downdrown.housekeeper.be.model.User;
@@ -35,13 +36,14 @@ public class UserMapperTest {
         dto.setUsername("a-username");
         dto.setFirstName("a-firstname");
         dto.setLastName("a-lastname");
+        dto.setGender(Gender.MALE);
         dto.setRole(Role.USER);
         dto.setLastLogin(ZonedDateTime.now());
 
         assertThat(mapper.toModel(dto))
             .isNotNull()
-            .extracting(User::getId, User::getUsername, User::getFirstName, User::getLastName, User::getRole, User::getLastLogin)
-            .containsExactly(1L, "a-username", "a-firstname", "a-lastname", Role.USER, null);
+            .extracting(User::getId, User::getUsername, User::getFirstName, User::getLastName, User::getGender, User::getRole, User::getLastLogin)
+            .containsExactly(1L, "a-username", "a-firstname", "a-lastname", Gender.MALE, Role.USER, null);
 
         assertThat(mapper.toModel(List.of(dto)))
             .isNotEmpty()
@@ -60,18 +62,19 @@ public class UserMapperTest {
         model.setUsername("a-username");
         model.setFirstName("a-firstname");
         model.setLastName("a-lastname");
+        model.setGender(Gender.FEMALE);
         model.setRole(Role.USER);
         model.setLastLogin(lastLogin);
 
         assertThat(mapper.toDto(model))
             .isNotNull()
-            .extracting(UserDTO::getId, UserDTO::getUsername, UserDTO::getFirstName, UserDTO::getLastName, UserDTO::getRole, UserDTO::getLastLogin)
-            .containsExactly(1L, "a-username", "a-firstname", "a-lastname", Role.USER, lastLogin);
+            .extracting(UserDTO::getId, UserDTO::getUsername, UserDTO::getFirstName, UserDTO::getLastName, UserDTO::getGender, UserDTO::getRole, UserDTO::getLastLogin)
+            .containsExactly(1L, "a-username", "a-firstname", "a-lastname", Gender.FEMALE, Role.USER, lastLogin);
 
         assertThat(mapper.toDto(List.of(model)))
             .isNotEmpty()
             .first()
-            .extracting(UserDTO::getId, UserDTO::getUsername, UserDTO::getFirstName, UserDTO::getLastName, UserDTO::getRole, UserDTO::getLastLogin)
-            .containsExactly(1L, "a-username", "a-firstname", "a-lastname", Role.USER, lastLogin);
+            .extracting(UserDTO::getId, UserDTO::getUsername, UserDTO::getFirstName, UserDTO::getLastName, UserDTO::getGender, UserDTO::getRole, UserDTO::getLastLogin)
+            .containsExactly(1L, "a-username", "a-firstname", "a-lastname", Gender.FEMALE, Role.USER, lastLogin);
     }
 }

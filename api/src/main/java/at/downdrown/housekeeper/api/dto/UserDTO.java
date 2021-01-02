@@ -1,5 +1,6 @@
 package at.downdrown.housekeeper.api.dto;
 
+import at.downdrown.housekeeper.api.Gender;
 import at.downdrown.housekeeper.api.Role;
 import lombok.Data;
 
@@ -17,6 +18,7 @@ public class UserDTO {
     private String username;
     private String firstName;
     private String lastName;
+    private Gender gender;
     private Role role;
     private ZonedDateTime lastLogin;
 

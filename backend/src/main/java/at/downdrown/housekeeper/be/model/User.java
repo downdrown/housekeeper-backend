@@ -1,5 +1,6 @@
 package at.downdrown.housekeeper.be.model;
 
+import at.downdrown.housekeeper.api.Gender;
 import at.downdrown.housekeeper.api.Role;
 import lombok.Getter;
 import lombok.Setter;
@@ -46,6 +47,10 @@ public class User implements Serializable {
 
     @Column(name = "LASTNAME", nullable = false)
     private String lastName;
+
+    @Column(name = "GENDER", length = SHORT_COLUMN_LENGTH, nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
     @Column(name = "ROLE", length = SHORT_COLUMN_LENGTH, nullable = false)
     @Enumerated(EnumType.STRING)

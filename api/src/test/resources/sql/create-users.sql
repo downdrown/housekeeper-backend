@@ -1,7 +1,7 @@
 -- Insert mock users
-insert into users (id, username, firstname, lastname, role) values (10, 'admin', 'Admin', 'Admin', 'ADMIN');
-insert into users (id, username, firstname, lastname, role) values (20, 'user', 'User', 'User', 'USER');
-insert into users (id, username, firstname, lastname, role) values (30, 'guest', 'Guest', 'Guest', 'GUEST');
+insert into users (id, username, firstname, lastname, gender, role) values (10, 'admin', 'Admin', 'Admin', 'FEMALE', 'ADMIN');
+insert into users (id, username, firstname, lastname, gender, role) values (20, 'user', 'User', 'User', 'MALE', 'USER');
+insert into users (id, username, firstname, lastname, gender, role) values (30, 'guest', 'Guest', 'Guest', 'MALE', 'GUEST');
 
 -- Insert mock credentials
 insert into credentials (id, users_fk, password) values (10, 10, '$2a$10$umThkjstS0ZuSaUmvyxkfucpi2wHH3q6y/8U.Sit8SNjVOAPeMjgi'); -- admin
